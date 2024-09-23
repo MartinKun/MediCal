@@ -1,7 +1,7 @@
 import { LogInIcon } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import MenuButton from "../MenuButton";
+import MenuButton from "./MenuButton";
 
 export const PublicNav = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);

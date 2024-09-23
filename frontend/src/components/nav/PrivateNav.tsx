@@ -1,6 +1,6 @@
 import { BellIcon, CalendarIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
-import MenuButton from "../MenuButton";
+import MenuButton from "./MenuButton";
 import { useState } from "react";
 
 export const PrivateNav = () => {
