@@ -4,6 +4,7 @@ import { AppointmentDetail } from "@/components/appointment/AppointmentDetail";
 import { AppointmentsList } from "@/components/appointment/AppointmentsList";
 import { Calendar } from "@/components/calendar/Calendar";
 import { Modal } from "@/components/modal/Modal";
+import { Card } from "@/components/others/Card";
 import useWindowWidth from "@/hook/useWindowWidth";
 import { AppointmentI } from "@/interfaces/appointmentInterface";
 import { useState } from "react";
@@ -52,23 +53,7 @@ export default function MyAppointments() {
         </Modal>
       )}
 
-      <div
-        className="bg-white
-                   bg-opacity-20
-                   backdrop-blur-lg
-                   rounded-xl
-                   p-8
-                   shadow-lg"
-      >
-        <h1
-          className="text-3xl
-                     font-bold
-                     text-white
-                     mb-6
-                     text-center"
-        >
-          Calendario de Citas Médicas
-        </h1>
+      <Card title={"Calendario de Citas Médicas"}>
         <Calendar
           setAppointmentSelected={setAppointmentSelected}
           setShowModal={setShowModal}
@@ -76,7 +61,7 @@ export default function MyAppointments() {
           setDateSelected={setDateSelected}
           desktopView={windowWidth > 1020}
         />
-      </div>
+      </Card>
       {windowWidth < 1020 && (
         <AppointmentsList
           dateSelected={dateSelected}
