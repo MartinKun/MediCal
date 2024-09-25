@@ -1,16 +1,21 @@
 import { generateDaysArray } from "@/util/dateUtils";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 import { OutOfMonthDay } from "./OutOfMonthDay";
 import { CalendarDay } from "./CalendarDay";
+import { appointmentsData } from "@/util/data";
 
 type Props = {
-  daysInMonth: string[];
+  month: number;
+  year: number;
+  daysInMonth: number[];
   firstDayOfMonthIndex: number;
   lastDayOfMonthIndex: number;
   lastSixDaysOfPreviousMonth: string[];
 };
 
 export const DesktopCalendarBody = ({
+  month,
+  year,
   daysInMonth,
   firstDayOfMonthIndex,
   lastDayOfMonthIndex,
@@ -29,7 +34,7 @@ export const DesktopCalendarBody = ({
             .map((day, index) => <OutOfMonthDay index={index} day={day} />)}
 
         {daysInMonth.map((day, index) => (
-          <CalendarDay index={index} day={day} />
+          <CalendarDay index={index} day={day} month={month} year={year} />
         ))}
 
         {lastDayOfMonthIndex >= 0 &&

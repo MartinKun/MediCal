@@ -22,17 +22,17 @@ export const getYearAsString = (date: Date): string => {
     return date.getFullYear().toString();
 };
 
-export const getDaysInMonth = (date: Date): string[] => {
+export const getDaysInMonth = (date: Date): number[] => {
     const year = date.getFullYear();
     const month = date.getMonth();
 
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
-    const days: string[] = [];
+    const days: number[] = [];
 
     for (let day = firstDay; day <= lastDay; day.setDate(day.getDate() + 1)) {
-        days.push(day.getDate().toString().padStart(2, '0'));
+        days.push(day.getDate());
     }
 
     return days;

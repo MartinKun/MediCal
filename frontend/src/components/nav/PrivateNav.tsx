@@ -22,6 +22,7 @@ export const PrivateNav = () => {
       />
       <div
         className={`${isMenuVisible ? "" : "-translate-x-full md:translate-x-0"}
+                   z-[100]
                    transition-transform
                    transition-opacity
                    ease-in-out

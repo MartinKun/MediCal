@@ -1,5 +1,4 @@
 import { daysOfWeek } from "@/util/dateUtils";
-import React from "react";
 
 export const CalendarHead = () => {
   return (

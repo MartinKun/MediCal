@@ -1,11 +1,15 @@
-import { PlusIcon } from "lucide-react";
+import { AppointmentCard } from "@/components/appointment/AppointmentCard";
+import { appointmentsData } from "@/util/data";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 
 type Props = {
   index: number;
-  day: string;
+  day: number;
+  month: number;
+  year: number;
 };
 
-export const CalendarDay = ({ day, index }: Props) => {
+export const CalendarDay = ({ day, index, month, year }: Props) => {
   return (
     <td
       key={index}
@@ -25,6 +29,18 @@ export const CalendarDay = ({ day, index }: Props) => {
       >
         {day}
       </div>
+
+      {appointmentsData
+        .filter(
+          (appointment) =>
+            appointment.date.getDate() === day &&
+            appointment.date.getMonth() === month &&
+            appointment.date.getFullYear() === year
+        )
+        .map((appointment) => (
+          <AppointmentCard appointment={appointment} />
+        ))}
+
       <button
         className="w-full
                    mt-1

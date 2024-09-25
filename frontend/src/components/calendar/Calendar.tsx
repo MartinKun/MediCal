@@ -9,33 +9,30 @@ import {
   getYearAsString,
 } from "@/util/dateUtils";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CalendarHead } from "./CalendarHead";
 import { DesktopCalendarBody } from "./desktop/DesktopCalendarBody";
 import { MobileCalendarBody } from "./mobile/MobileCalendarBody";
 
-export const Calendar = () => {
-  const [windowWidth, setWindowWidth] = useState(0);
-
-  // Función para obtener el ancho de la ventana
-  const handleResize = () => {
-    setWindowWidth(window.innerWidth);
+type Props = {
+  dateSelected: {
+    day: undefined | number;
+    month: number;
+    year: number;
   };
+  setDateSelected: (value: {
+    day: undefined | number;
+    month: number;
+    year: number;
+  }) => void;
+  desktopView: boolean;
+};
 
-  // Hook para manejar el cambio de tamaño de la ventana
-  useEffect(() => {
-    // Establecer el ancho inicial cuando el componente se monta
-    setWindowWidth(window.innerWidth);
-
-    // Añadir el event listener para actualizar el ancho cuando la ventana cambie de tamaño
-    window.addEventListener("resize", handleResize);
-
-    // Limpiar el event listener cuando el componente se desmonte
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
+export const Calendar = ({
+  dateSelected,
+  setDateSelected,
+  desktopView,
+}: Props) => {
   const [day, setDay] = useState(new Date());
 
   const daysInMonth = getDaysInMonth(day);
@@ -58,7 +55,15 @@ export const Calendar = () => {
                      px-4
                      py-2
                      rounded-lg"
-          onClick={() => setDay(getFirstDayOfPreviousMonth(day))}
+          onClick={() => {
+            setDay(getFirstDayOfPreviousMonth(day));
+            setDateSelected({
+              ...dateSelected,
+              day: undefined,
+              month: day.getMonth() - 1,
+              year: day.getFullYear(),
+            });
+          }}
         >
           <ChevronLeftIcon className="h-6 w-6" />
         </button>
@@ -77,7 +82,15 @@ export const Calendar = () => {
                      px-4
                      py-2
                      rounded-lg"
-          onClick={() => setDay(getFirstDayOfNextMonth(day))}
+          onClick={() => {
+            setDay(getFirstDayOfNextMonth(day));
+            setDateSelected({
+              ...dateSelected,
+              day: undefined,
+              month: day.getMonth() + 1,
+              year: day.getFullYear(),
+            });
+          }}
         >
           <ChevronRightIcon className="h-6 w-6" />
         </button>
@@ -86,15 +99,19 @@ export const Calendar = () => {
       <table className="w-full">
         <CalendarHead />
 
-        {windowWidth < 1020 ? (
-          <MobileCalendarBody
+        {desktopView ? (
+          <DesktopCalendarBody
+            month={dateSelected.month}
+            year={dateSelected.year}
             daysInMonth={daysInMonth}
             firstDayOfMonthIndex={firstDayOfMonthIndex}
             lastDayOfMonthIndex={lastDayOfMonthIndex}
             lastSixDaysOfPreviousMonth={lastSixDaysOfPreviousMonth}
           />
         ) : (
-          <DesktopCalendarBody
+          <MobileCalendarBody
+            dateSelected={dateSelected}
+            setDateSelected={setDateSelected}
             daysInMonth={daysInMonth}
             firstDayOfMonthIndex={firstDayOfMonthIndex}
             lastDayOfMonthIndex={lastDayOfMonthIndex}

@@ -3,13 +3,25 @@ import { CalendarDay } from "./CalendarDay";
 import { OutOfMonthDay } from "./OutOfMonthDay";
 
 type Props = {
-  daysInMonth: string[];
+  dateSelected: {
+    day: undefined | number;
+    month: number;
+    year: number;
+  };
+  setDateSelected: (value: {
+    day: undefined | number;
+    month: number;
+    year: number;
+  }) => void;
+  daysInMonth: number[];
   firstDayOfMonthIndex: number;
   lastDayOfMonthIndex: number;
   lastSixDaysOfPreviousMonth: string[];
 };
 
 export const MobileCalendarBody = ({
+  dateSelected,
+  setDateSelected,
   daysInMonth,
   firstDayOfMonthIndex,
   lastDayOfMonthIndex,
@@ -28,7 +40,12 @@ export const MobileCalendarBody = ({
             .map((day, index) => <OutOfMonthDay index={index} day={day} />)}
 
         {daysInMonth.map((day, index) => (
-          <CalendarDay index={index} day={day} />
+          <CalendarDay
+            index={index}
+            day={day}
+            dateSelected={dateSelected}
+            setDateSelected={setDateSelected}
+          />
         ))}
 
         {lastDayOfMonthIndex >= 0 &&

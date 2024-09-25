@@ -11,7 +11,9 @@ const Header: React.FC = () => {
         className="bg-white
                    bg-opacity-20
                    backdrop-blur-lg
-                   p-4"
+                   p-4
+                   z-[100]
+                   relative"
       >
         <div
           className="max-w-7xl
