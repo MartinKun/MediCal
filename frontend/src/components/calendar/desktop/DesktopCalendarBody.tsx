@@ -1,8 +1,7 @@
 import { generateDaysArray } from "@/util/dateUtils";
-import { PlusIcon, Trash2Icon } from "lucide-react";
 import { OutOfMonthDay } from "./OutOfMonthDay";
 import { CalendarDay } from "./CalendarDay";
-import { appointmentsData } from "@/util/data";
+import { AppointmentI } from "@/interfaces/appointmentInterface";
 
 type Props = {
   month: number;
@@ -11,6 +10,8 @@ type Props = {
   firstDayOfMonthIndex: number;
   lastDayOfMonthIndex: number;
   lastSixDaysOfPreviousMonth: string[];
+  setShowModal: (value: boolean) => void;
+  setAppointmentSelected: (value: AppointmentI | undefined) => void;
 };
 
 export const DesktopCalendarBody = ({
@@ -20,6 +21,8 @@ export const DesktopCalendarBody = ({
   firstDayOfMonthIndex,
   lastDayOfMonthIndex,
   lastSixDaysOfPreviousMonth,
+  setShowModal,
+  setAppointmentSelected,
 }: Props) => {
   return (
     <tbody className="w-full">
@@ -34,7 +37,14 @@ export const DesktopCalendarBody = ({
             .map((day, index) => <OutOfMonthDay index={index} day={day} />)}
 
         {daysInMonth.map((day, index) => (
-          <CalendarDay index={index} day={day} month={month} year={year} />
+          <CalendarDay
+            index={index}
+            day={day}
+            month={month}
+            year={year}
+            setShowModal={setShowModal}
+            setAppointmentSelected={setAppointmentSelected}
+          />
         ))}
 
         {lastDayOfMonthIndex >= 0 &&

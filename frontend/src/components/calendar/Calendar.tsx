@@ -13,8 +13,11 @@ import { useState } from "react";
 import { CalendarHead } from "./CalendarHead";
 import { DesktopCalendarBody } from "./desktop/DesktopCalendarBody";
 import { MobileCalendarBody } from "./mobile/MobileCalendarBody";
+import { AppointmentI } from "@/interfaces/appointmentInterface";
 
 type Props = {
+  setShowModal: (value: boolean) => void;
+  setAppointmentSelected: (value: AppointmentI | undefined) => void;
   dateSelected: {
     day: undefined | number;
     month: number;
@@ -29,6 +32,8 @@ type Props = {
 };
 
 export const Calendar = ({
+  setShowModal,
+  setAppointmentSelected,
   dateSelected,
   setDateSelected,
   desktopView,
@@ -101,6 +106,8 @@ export const Calendar = ({
 
         {desktopView ? (
           <DesktopCalendarBody
+            setAppointmentSelected={setAppointmentSelected}
+            setShowModal={setShowModal}
             month={dateSelected.month}
             year={dateSelected.year}
             daysInMonth={daysInMonth}

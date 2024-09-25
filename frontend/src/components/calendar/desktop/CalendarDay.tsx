@@ -1,4 +1,5 @@
 import { AppointmentCard } from "@/components/appointment/AppointmentCard";
+import { AppointmentI } from "@/interfaces/appointmentInterface";
 import { appointmentsData } from "@/util/data";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 
@@ -7,9 +8,18 @@ type Props = {
   day: number;
   month: number;
   year: number;
+  setShowModal: (value: boolean) => void;
+  setAppointmentSelected: (value: AppointmentI | undefined) => void;
 };
 
-export const CalendarDay = ({ day, index, month, year }: Props) => {
+export const CalendarDay = ({
+  day,
+  index,
+  month,
+  year,
+  setShowModal,
+  setAppointmentSelected,
+}: Props) => {
   return (
     <td
       key={index}
@@ -38,7 +48,11 @@ export const CalendarDay = ({ day, index, month, year }: Props) => {
             appointment.date.getFullYear() === year
         )
         .map((appointment) => (
-          <AppointmentCard appointment={appointment} />
+          <AppointmentCard
+            appointment={appointment}
+            setShowModal={setShowModal}
+            setAppointmentSelected={setAppointmentSelected}
+          />
         ))}
 
       <button
@@ -52,6 +66,10 @@ export const CalendarDay = ({ day, index, month, year }: Props) => {
                    justify-center
                    py-3
                    rounded-lg"
+        onClick={() => {
+          setAppointmentSelected(undefined);
+          setShowModal(true);
+        }}
       >
         <PlusIcon className="h-4 w-4" />
       </button>

@@ -1,18 +1,17 @@
+import { AppointmentI } from "@/interfaces/appointmentInterface";
 import { Trash2Icon } from "lucide-react";
-
-interface AppointmentI {
-  id: number;
-  name: string;
-  date: Date;
-  image: string;
-  chiefComplaintReason: string;
-}
 
 type Props = {
   appointment: AppointmentI;
+  setShowModal: (value: boolean) => void;
+  setAppointmentSelected: (value: AppointmentI) => void;
 };
 
-export const AppointmentCard = ({ appointment }: Props) => {
+export const AppointmentCard = ({
+  appointment,
+  setShowModal,
+  setAppointmentSelected,
+}: Props) => {
   return (
     <div
       key={appointment.id}
@@ -26,6 +25,10 @@ export const AppointmentCard = ({ appointment }: Props) => {
                  duration-200
                  relative
                  min-w-[200px]"
+      onClick={() => {
+        setAppointmentSelected(appointment);
+        setShowModal(true);
+      }}
     >
       <div
         className="flex
