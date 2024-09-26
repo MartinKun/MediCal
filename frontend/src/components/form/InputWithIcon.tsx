@@ -4,6 +4,8 @@ type Props = {
   type: string;
   placeholder: string;
   icon: React.ComponentType;
+  handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value: string;
 };
 
 export const InputWithIcon = ({
@@ -12,11 +14,13 @@ export const InputWithIcon = ({
   type,
   placeholder,
   icon: Icon,
+  handleChange,
+  value,
 }: Props) => {
   return (
     <div className="space-y-2">
       <label
-        htmlFor="email"
+        htmlFor={name}
         className="block
                    text-white
                    text-sm
@@ -27,6 +31,7 @@ export const InputWithIcon = ({
       <div className="relative">
         <input
           id={name}
+          name={name}
           type={type}
           placeholder={placeholder}
           className="w-full
@@ -44,16 +49,18 @@ export const InputWithIcon = ({
                      focus:ring-purple-600
                      focus:border-transparent"
           required
+          value={value}
+          onChange={handleChange}
         />
 
         <span
           className="absolute
-                       left-3
-                       top-1/2
-                       transform
-                       -translate-y-1/2
-                       text-gray-500
-                       h-5 w-5"
+                     left-3
+                     top-1/2
+                     transform
+                     -translate-y-1/2
+                     text-gray-500
+                     h-5 w-5"
         >
           <Icon />
         </span>

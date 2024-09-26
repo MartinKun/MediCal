@@ -28,9 +28,9 @@ export const AppointmentsList = ({
     >
       <h2
         className="text-xl
-                 font-semibold
-                 text-white
-                 mt-[32px]"
+                   font-semibold
+                   text-white
+                   mt-[32px]"
       >
         Mis citas:
       </h2>

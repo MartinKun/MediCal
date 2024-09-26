@@ -1,43 +1,26 @@
-import { LockIcon, MailIcon } from "lucide-react";
 import { InputWithIcon } from "./InputWithIcon";
+import { loginInputFields } from "@/util/inputFields";
+import { SubmitButton } from "./SubmitButton";
+import useFormState from "@/hook/useForm";
 
 export const LoginForm = () => {
+  const { formState, setFormState } = useFormState({ email: "", password: "" });
+
   return (
     <form className="space-y-6">
-      <InputWithIcon
-        name={"email"}
-        label={"Correo Electrónico"}
-        type={"email"}
-        placeholder={"tu@ejemplo.com"}
-        icon={MailIcon}
-      />
-      <InputWithIcon
-        name={"password"}
-        label={"Contraseña"}
-        type={"email"}
-        placeholder={"••••••••"}
-        icon={LockIcon}
-      />
-      <button
-        type="submit"
-        className="w-full
-                   py-2 px-4
-                   bg-white
-                   bg-opacity-20
-                   hover:bg-opacity-30
-                   text-white
-                   font-semibold
-                   rounded-md
-                   transition
-                   duration-300
-                   ease-in-out
-                   focus:outline-none
-                   focus:ring-2
-                   focus:ring-purple-600
-                   focus:ring-opacity-50"
-      >
-        Iniciar Sesión
-      </button>
+      {loginInputFields.map((field, index) => (
+        <InputWithIcon
+          key={index}
+          name={field.name}
+          label={field.label}
+          type={field.type}
+          placeholder={field.placeholder}
+          icon={field.icon}
+          value={formState[field.name as keyof typeof formState]}
+          handleChange={setFormState}
+        />
+      ))}
+      <SubmitButton value={"Iniciar Sesión"} />
     </form>
   );
 };

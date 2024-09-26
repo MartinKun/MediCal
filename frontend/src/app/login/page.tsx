@@ -1,6 +1,6 @@
+"use client";
 import { LoginForm } from "@/components/form/LoginForm";
 import { Card } from "@/components/others/Card";
-import { LockIcon, MailIcon } from "lucide-react";
 
 export default function Login() {
   return (
