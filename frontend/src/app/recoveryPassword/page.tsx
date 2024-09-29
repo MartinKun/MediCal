@@ -1,7 +1,6 @@
 "use client";
 import { RecoveryPasswordForm } from "@/components/form/RecoveryPasswordForm";
 import { Card } from "@/components/others/Card";
-import { ArrowLeftIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function RecoveryPassword() {
