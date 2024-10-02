@@ -5,6 +5,7 @@ import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.response.RegisterUserResponse;
 import com.app.service.implementation.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +28,7 @@ public class AuthController {
 
         RegisterUserResponse response = authService.register(request);
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     private void validateUserTypeFields(RegisterUserRequest request) {
