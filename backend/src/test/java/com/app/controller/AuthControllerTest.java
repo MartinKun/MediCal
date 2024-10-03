@@ -5,6 +5,7 @@ import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.RegisterDoctorResponse;
 import com.app.controller.dto.response.RegisterPatientResponse;
 import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -161,6 +163,40 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.role").value("DOCTOR"));;
 
         verify(authServiceImpl).register(any(RegisterUserRequest.class));
+    }
+
+    @Test
+    @Order(3)
+    @DisplayName("Test 3: register patient with missing fields")
+    public void testRegisterPatientMissingFields() throws Exception {
+        patientRequest.setAddress(null);
+
+        when(authServiceImpl.register(any(RegisterUserRequest.class)))
+                .thenThrow(new IncompleteFieldsException("Incomplete fields for Patient"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(patientRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.error").value("Incomplete fields for Patient"));
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("Test 4: register doctor with missing fields")
+    public void testRegisterDoctorMissingFields() throws Exception {
+        doctorRequest.setOfficeAddress(null);
+
+        when(authServiceImpl.register(any(RegisterUserRequest.class)))
+                .thenThrow(new IncompleteFieldsException("Incomplete fields for Doctor"));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(patientRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.error").value("Incomplete fields for Doctor"));
     }
 
 }

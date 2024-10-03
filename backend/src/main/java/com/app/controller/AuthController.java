@@ -43,7 +43,7 @@ public class AuthController {
 
         if (request.getRole() == RoleEnum.PATIENT) {
             if (request.getAddress() == null) {
-                throw new IncompleteFieldsException("Incomplete fields for Doctor");
+                throw new IncompleteFieldsException("Incomplete fields for Patient");
             }
         }
     }
