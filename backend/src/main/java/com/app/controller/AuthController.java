@@ -3,6 +3,7 @@ package com.app.controller;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,13 +37,13 @@ public class AuthController {
             if (request.getOfficeAddress() == null &&
                     request.getSpeciality() == null &&
                     request.getLicense() == null) {
-                throw new RuntimeException("Incomplete fields for Doctor");
+                throw new IncompleteFieldsException("Incomplete fields for Doctor");
             }
         }
 
         if (request.getRole() == RoleEnum.PATIENT) {
             if (request.getAddress() == null) {
-                throw new RuntimeException("Incomplete fields for Patient");
+                throw new IncompleteFieldsException("Incomplete fields for Doctor");
             }
         }
     }
