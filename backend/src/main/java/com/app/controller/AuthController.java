@@ -1,10 +1,13 @@
 package com.app.controller;
 
+import com.app.controller.dto.EmailDTO;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.response.RegisterUserResponse;
 import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
+import com.app.service.implementation.EmailServiceImpl;
+import com.app.util.EmailTemplates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,9 @@ public class AuthController {
     @Autowired
     AuthServiceImpl authService;
 
+    @Autowired
+    EmailServiceImpl emailService;
+
     @PostMapping("/register")
     public ResponseEntity<RegisterUserResponse> register(
             @RequestBody RegisterUserRequest request
@@ -28,6 +34,15 @@ public class AuthController {
         validateUserTypeFields(request);
 
         RegisterUserResponse response = authService.register(request);
+
+        // TODO: Generate a token for user account confirmation.
+        String token = "token";
+        EmailDTO emailDTO = EmailDTO.builder()
+                .recipient(response.getEmail())
+                .subject("Confirmación de registro en nuestro sitio web")
+                .body(EmailTemplates.getConfirmationEmailTemplate(token, response.getFirstName()))
+                .build();
+        emailService.sendEmail(emailDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
