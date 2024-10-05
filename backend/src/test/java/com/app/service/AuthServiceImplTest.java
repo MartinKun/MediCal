@@ -94,6 +94,7 @@ public class AuthServiceImplTest {
         assertEquals("Mitre 123", response.getAddress());
         assertEquals("johndoe@mail.com", response.getEmail());
         assertEquals("encodedPassword", response.getPassword());
+        assertEquals(false, response.isEnabled());
         assertEquals(RoleEnum.PATIENT, response.getRole());
     }
 
@@ -129,6 +130,7 @@ public class AuthServiceImplTest {
         assertEquals("Main St 456", response.getOfficeAddress());
         assertEquals("drsmith@mail.com", response.getEmail());
         assertEquals("encodedPassword", response.getPassword());
+        assertEquals(false, response.isEnabled());
         assertEquals(RoleEnum.DOCTOR, response.getRole());
     }
 }

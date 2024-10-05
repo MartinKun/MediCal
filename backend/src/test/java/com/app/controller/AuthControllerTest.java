@@ -7,6 +7,7 @@ import com.app.controller.dto.response.RegisterPatientResponse;
 import com.app.controller.dto.response.RegisterUserResponse;
 import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
+import com.app.service.implementation.EmailServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class AuthControllerTest {
 
     @MockBean
     private AuthServiceImpl authServiceImpl;
+
+    @MockBean
+    private EmailServiceImpl emailServiceImpl;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -118,7 +122,8 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.birthDate").value("1990-01-01"))
                 .andExpect(jsonPath("$.gender").value("male"))
                 .andExpect(jsonPath("$.phone").value("123456"))
-                .andExpect(jsonPath("$.role").value("PATIENT"));
+                .andExpect(jsonPath("$.role").value("PATIENT"))
+                .andExpect(jsonPath("$.enabled").value(false));
 
         verify(authServiceImpl).register(any(RegisterUserRequest.class));
     }
@@ -160,7 +165,8 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.birthDate").value("1990-01-01"))
                 .andExpect(jsonPath("$.gender").value("female"))
                 .andExpect(jsonPath("$.phone").value("123456"))
-                .andExpect(jsonPath("$.role").value("DOCTOR"));;
+                .andExpect(jsonPath("$.role").value("DOCTOR"))
+                .andExpect(jsonPath("$.enabled").value(false));
 
         verify(authServiceImpl).register(any(RegisterUserRequest.class));
     }

@@ -38,6 +38,7 @@ public class UserRepositoryUnitTest {
         user.setBirthDate(LocalDate.of(1990, 1, 1));
         user.setGender("male");
         user.setPhone("123456789");
+        user.setEnabled(false);
 
        Patient response = (Patient) userRepository.save(user);
 
@@ -64,6 +65,7 @@ public class UserRepositoryUnitTest {
         user.setBirthDate(LocalDate.of(1990, 1, 1));
         user.setGender("male");
         user.setPhone("123456789");
+        user.setEnabled(false);
 
         Doctor response = (Doctor) userRepository.save(user);
 
