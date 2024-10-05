@@ -35,14 +35,7 @@ public class AuthController {
 
         RegisterUserResponse response = authService.register(request);
 
-        // TODO: Generate a token for user account confirmation.
-        String token = "token";
-        EmailDTO emailDTO = EmailDTO.builder()
-                .recipient(response.getEmail())
-                .subject("Confirmación de registro en nuestro sitio web")
-                .body(EmailTemplates.getConfirmationEmailTemplate(token, response.getFirstName()))
-                .build();
-        emailService.sendEmail(emailDTO);
+        emailService.sendConfirmUserEmail(response);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

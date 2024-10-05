@@ -19,4 +19,5 @@ public abstract class RegisterUserResponse {
     private String gender;
     private String phone;
     private RoleEnum role;
+    private boolean isEnabled;
 }

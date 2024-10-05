@@ -22,7 +22,7 @@ public class EmailTemplates {
                 .append("<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" width=\"600\" style=\"max-width: 600px; background-color: rgba(255, 255, 255, 0.9); border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\">")
                 .append("<tr>")
                 .append("<td style=\"position: relative;\">")
-                .append("<img src=\"https://asset.cloudinary.com/dpp28f2ek/688a3086ec6dc3cc32fdd51f9f960d13\" alt=\"Banner de MediCal\" style=\"width: 100%; height: 150px; object-fit: cover; object-position: center; display: block;\">")
+                .append("<img src=\"https://res.cloudinary.com/dpp28f2ek/image/upload/v1728075952/medico-mujeres-hospital-estetoscopio_23-2148827781_jjsz1b.avif\" alt=\"Banner de MediCal\" style=\"width: 100%; height: 150px; object-fit: cover; object-position: center; display: block;\">")
                 .append("</td>")
                 .append("</tr>")
                 .append("<tr>")

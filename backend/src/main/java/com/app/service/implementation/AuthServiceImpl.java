@@ -27,6 +27,8 @@ public class AuthServiceImpl implements AuthService {
 
         User userEntity = createUserEntity(request);
 
+        userEntity.setEnabled(false);
+
         User user = userRepository.save(userEntity);
 
         return createRegisterUserResponse(user);
@@ -102,5 +104,6 @@ public class AuthServiceImpl implements AuthService {
         response.setRole(
                 user instanceof Patient ? RoleEnum.PATIENT : RoleEnum.DOCTOR
         );
+        response.setEnabled(user.isEnabled());
     }
 }

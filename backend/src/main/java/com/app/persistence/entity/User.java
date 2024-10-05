@@ -30,6 +30,8 @@ public abstract class User implements UserDetails {
     private String password;
     private String image;
 
+    private boolean isEnabled;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -57,6 +59,6 @@ public abstract class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.isEnabled;
     }
 }

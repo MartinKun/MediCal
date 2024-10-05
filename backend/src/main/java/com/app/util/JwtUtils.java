@@ -15,19 +15,34 @@ import java.util.UUID;
 @Component
 public class JwtUtils {
 
-    private final int TOKEN_EXPIRATION_IN_MILLIS = 1800000;
+    private final int ACCESS_TOKEN_EXPIRATION_IN_MILLIS = 1800000;
+    private final int CONFIRM_TOKEN_EXPIRATION_IN_MILLIS = 1800000;
 
-    @Value("${security.jwt.privateKey}")
-    private String privateKey;
+    @Value("${security.jwt.accessTokenKey}")
+    private String accessTokenKey;
 
-    public String createToken(Authentication authentication) {
+    @Value("${security.jwt.confirmTokenKey}")
+    private String confirmTokenKey;
+
+    public String createAccessToken(Authentication authentication) {
         Algorithm algorithm = getAlgorithm();
 
         String username = authentication.getPrincipal().toString();
         return JWT.create()
                 .withSubject(username)
                 .withIssuedAt(new Date())
-                .withExpiresAt(new Date(System.currentTimeMillis() + TOKEN_EXPIRATION_IN_MILLIS))
+                .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_IN_MILLIS))
+                .withJWTId(UUID.randomUUID().toString())
+                .sign(algorithm);
+    }
+
+    public String createConfirmToken(String username) {
+        Algorithm algorithm = getAlgorithm();
+
+        return JWT.create()
+                .withSubject(username)
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + CONFIRM_TOKEN_EXPIRATION_IN_MILLIS))
                 .withJWTId(UUID.randomUUID().toString())
                 .sign(algorithm);
     }
@@ -48,7 +63,7 @@ public class JwtUtils {
     }
 
     private Algorithm getAlgorithm() {
-        return Algorithm.HMAC256(this.privateKey);
+        return Algorithm.HMAC256(this.accessTokenKey);
     }
 
     public String extractUsername(DecodedJWT decodedJWT){

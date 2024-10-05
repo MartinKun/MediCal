@@ -1,8 +1,12 @@
 package com.app.service.implementation;
 
 import com.app.controller.dto.EmailDTO;
+import com.app.controller.dto.response.RegisterUserResponse;
 import com.app.service.EmailService;
+import com.app.util.EmailTemplates;
+import com.app.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +30,10 @@ public class EmailServiceImpl implements EmailService {
     private String HOST;
 
     private final String FROM_NAME = "Martín";
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
     @Override
     public void sendEmail(EmailDTO emailDTO) {
 
@@ -70,5 +78,17 @@ public class EmailServiceImpl implements EmailService {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void sendConfirmUserEmail(RegisterUserResponse registerUserResponse) {
+        String token = jwtUtils.createConfirmToken(registerUserResponse.getEmail());
+
+        EmailDTO emailDTO = EmailDTO.builder()
+                .recipient(registerUserResponse.getEmail())
+                .subject("Confirmación de registro en nuestro sitio web")
+                .body(EmailTemplates.getConfirmationEmailTemplate(token, registerUserResponse.getFirstName()))
+                .build();
+        this.sendEmail(emailDTO);
     }
 }
