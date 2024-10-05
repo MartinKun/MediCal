@@ -36,16 +36,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         final String jwtToken = authHeader.substring(7);
 
+        try {
+
         DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
 
         String username = jwtUtils.extractUsername(decodedJWT);
 
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
                 username, null, null
         );
 
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authenticationToken);
         SecurityContextHolder.setContext(context);
+
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        filterChain.doFilter(request, response);
     }
 }
