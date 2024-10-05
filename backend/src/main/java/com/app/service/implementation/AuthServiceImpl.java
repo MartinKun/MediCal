@@ -10,6 +10,8 @@ import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
 import com.app.persistence.repository.UserRepository;
 import com.app.service.AuthService;
+import com.app.util.JwtUtils;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtUtils jwtUtils;
+
     @Override
     public RegisterUserResponse register(RegisterUserRequest request) {
 
@@ -32,6 +37,23 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.save(userEntity);
 
         return createRegisterUserResponse(user);
+    }
+
+    @Override
+    public RegisterUserResponse enableUser(String token) {
+
+        DecodedJWT decodedJWT = jwtUtils.validateToken(token);
+        String username = jwtUtils.extractUsername(decodedJWT);
+
+        System.out.println(username);
+
+        User user = userRepository.findUserByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User does not exist"));
+        user.setEnabled(true);
+
+        User response = userRepository.save(user);
+
+        return createRegisterUserResponse(response);
     }
 
 

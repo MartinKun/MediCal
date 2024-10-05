@@ -5,4 +5,6 @@ import com.app.controller.dto.response.RegisterUserResponse;
 
 public interface AuthService {
     RegisterUserResponse register(RegisterUserRequest request);
+
+    RegisterUserResponse enableUser(String token);
 }
