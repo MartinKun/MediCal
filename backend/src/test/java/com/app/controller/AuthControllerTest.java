@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -203,6 +204,46 @@ public class AuthControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.errors.error").value("Incomplete fields for Doctor"));
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("Test 5: enable user with valid token")
+    public void testEnableUser() throws Exception {
+        String validToken = "Bearer validJwtToken";
+
+        RegisterUserResponse patientResponse = RegisterPatientResponse
+                .builder()
+                .address("123 Street")
+                .build();
+        patientResponse.setFirstName("John");
+        patientResponse.setLastName("Doe");
+        patientResponse.setEmail("johndoe@mail.com");
+        patientResponse.setPassword("password123");
+        patientResponse.setBirthDate(LocalDate.of(1990, 1, 1));
+        patientResponse.setGender("male");
+        patientResponse.setPhone("123456");
+        patientResponse.setRole(RoleEnum.PATIENT);
+        patientResponse.setEnabled(true);
+
+        when(authServiceImpl.enableUser(any(String.class))).thenReturn(patientResponse);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/enableUser")
+                        .header(HttpHeaders.AUTHORIZATION, validToken)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.firstName").value("John"))
+                .andExpect(jsonPath("$.lastName").value("Doe"))
+                .andExpect(jsonPath("$.email").value("johndoe@mail.com"))
+                .andExpect(jsonPath("$.password").value("password123"))
+                .andExpect(jsonPath("$.address").value("123 Street"))
+                .andExpect(jsonPath("$.birthDate").value("1990-01-01"))
+                .andExpect(jsonPath("$.gender").value("male"))
+                .andExpect(jsonPath("$.phone").value("123456"))
+                .andExpect(jsonPath("$.role").value("PATIENT"))
+                .andExpect(jsonPath("$.enabled").value(true));
+
+        verify(authServiceImpl).enableUser(any(String.class));
     }
 
 }

@@ -45,8 +45,6 @@ public class AuthServiceImpl implements AuthService {
         DecodedJWT decodedJWT = jwtUtils.validateToken(token);
         String username = jwtUtils.extractUsername(decodedJWT);
 
-        System.out.println(username);
-
         User user = userRepository.findUserByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User does not exist"));
         user.setEnabled(true);
