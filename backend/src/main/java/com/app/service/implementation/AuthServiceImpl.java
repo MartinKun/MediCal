@@ -4,9 +4,9 @@ import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.LoginResponse;
-import com.app.controller.dto.response.RegisterDoctorResponse;
-import com.app.controller.dto.response.RegisterPatientResponse;
-import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.controller.dto.response.DoctorRegistrationResponse;
+import com.app.controller.dto.response.PatientRegistrationResponse;
+import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
@@ -37,7 +37,7 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public RegisterUserResponse register(RegisterUserRequest request) {
+    public UserRegistrationResponse signup(RegisterUserRequest request) {
 
         User user = createUserEntity(request);
 
@@ -45,7 +45,7 @@ public class AuthServiceImpl implements AuthService {
 
         User response = userRepository.save(user);
 
-        return createRegisterUserResponse(response);
+        return createUserRegistrationResponse(response);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public RegisterUserResponse enableUser(String token) {
+    public UserRegistrationResponse confirmUser(String token) {
 
         DecodedJWT decodedJWT = jwtUtils.validateToken(token);
         String username = jwtUtils.extractUsername(decodedJWT);
@@ -79,7 +79,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEnabled(true);
         User response = userRepository.save(user);
 
-        return createRegisterUserResponse(response);
+        return createUserRegistrationResponse(response);
     }
 
 
@@ -119,15 +119,15 @@ public class AuthServiceImpl implements AuthService {
         userEntity.setPhone(request.getPhone());
     }
 
-    private RegisterUserResponse createRegisterUserResponse(User user) {
-        RegisterUserResponse response;
+    private UserRegistrationResponse createUserRegistrationResponse(User user) {
+        UserRegistrationResponse response;
 
         if (user instanceof Patient) {
-            response = RegisterPatientResponse.builder()
+            response = PatientRegistrationResponse.builder()
                     .address(((Patient) user).getAddress())
                     .build();
         } else if (user instanceof Doctor) {
-            response = RegisterDoctorResponse.builder()
+            response = DoctorRegistrationResponse.builder()
                     .license(((Doctor) user).getLicense())
                     .speciality(((Doctor) user).getSpeciality())
                     .officeAddress(((Doctor) user).getOfficeAddress())
@@ -141,7 +141,7 @@ public class AuthServiceImpl implements AuthService {
         return response;
     }
 
-    private void setCommonResponseFields(RegisterUserResponse response, User user) {
+    private void setCommonResponseFields(UserRegistrationResponse response, User user) {
         response.setFirstName(user.getFirstName());
         response.setLastName(user.getLastName());
         response.setEmail(user.getEmail());

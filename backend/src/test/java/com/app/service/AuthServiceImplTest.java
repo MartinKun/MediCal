@@ -2,9 +2,9 @@ package com.app.service;
 
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.RegisterUserRequest;
-import com.app.controller.dto.response.RegisterDoctorResponse;
-import com.app.controller.dto.response.RegisterPatientResponse;
-import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.controller.dto.response.DoctorRegistrationResponse;
+import com.app.controller.dto.response.PatientRegistrationResponse;
+import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
@@ -93,7 +93,7 @@ public class AuthServiceImplTest {
     @Test
     @DisplayName("Test 1: Register a Patient User Successfully")
     @Order(1)
-    public void registerPatientTest() {
+    public void patientRegistrationTest() {
         // Arrange
         Patient savedPatient = Patient.builder()
                 .address("Mitre 123")
@@ -110,7 +110,7 @@ public class AuthServiceImplTest {
         Mockito.when(userRepository.save(any(Patient.class))).thenReturn(savedPatient);
 
         // Act
-        RegisterPatientResponse response = (RegisterPatientResponse) authServiceImpl.register(patientRequest);
+        PatientRegistrationResponse response = (PatientRegistrationResponse) authServiceImpl.signup(patientRequest);
 
         // Assert
         assertEquals("John", response.getFirstName());
@@ -125,7 +125,7 @@ public class AuthServiceImplTest {
     @Test
     @DisplayName("Test 2: Register a Doctor User Successfully")
     @Order(2)
-    public void registerDoctorTest() {
+    public void doctorRegistrationTest() {
         // Arrange
         Doctor savedDoctor = Doctor.builder()
                 .speciality("Cardiology")
@@ -144,7 +144,7 @@ public class AuthServiceImplTest {
         Mockito.when(userRepository.save(any(Doctor.class))).thenReturn(savedDoctor);
 
         // Act
-        RegisterDoctorResponse response = (RegisterDoctorResponse) authServiceImpl.register(doctorRequest);
+        DoctorRegistrationResponse response = (DoctorRegistrationResponse) authServiceImpl.signup(doctorRequest);
 
         // Assert
         assertEquals("Dr. Smith", response.getFirstName());
@@ -176,7 +176,7 @@ public class AuthServiceImplTest {
         Mockito.when(userRepository.save(user)).thenReturn(user);
 
         // Act
-        RegisterUserResponse response = authServiceImpl.enableUser(token);
+        UserRegistrationResponse response = authServiceImpl.confirmUser(token);
 
         // Assert
         assertEquals("John", response.getFirstName());

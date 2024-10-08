@@ -3,12 +3,12 @@ package com.app.service;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.LoginResponse;
-import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.controller.dto.response.UserRegistrationResponse;
 
 public interface AuthService {
-    RegisterUserResponse register(RegisterUserRequest request);
+    UserRegistrationResponse signup(RegisterUserRequest request);
 
     LoginResponse login(LoginRequest request);
 
-    RegisterUserResponse enableUser(String token);
+    UserRegistrationResponse confirmUser(String token);
 }

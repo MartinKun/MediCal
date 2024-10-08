@@ -1,7 +1,7 @@
 package com.app.service.implementation;
 
 import com.app.controller.dto.EmailDTO;
-import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.service.EmailService;
 import com.app.util.EmailTemplates;
 import com.app.util.JwtUtils;
@@ -81,13 +81,13 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendConfirmUserEmail(RegisterUserResponse registerUserResponse) {
-        String token = jwtUtils.createConfirmToken(registerUserResponse.getEmail());
+    public void sendConfirmUserEmail(UserRegistrationResponse userRegistrationResponse) {
+        String token = jwtUtils.createConfirmToken(userRegistrationResponse.getEmail());
 
         EmailDTO emailDTO = EmailDTO.builder()
-                .recipient(registerUserResponse.getEmail())
+                .recipient(userRegistrationResponse.getEmail())
                 .subject("Confirmación de registro en nuestro sitio web")
-                .body(EmailTemplates.getConfirmationEmailTemplate(token, registerUserResponse.getFirstName()))
+                .body(EmailTemplates.getConfirmationEmailTemplate(token, userRegistrationResponse.getFirstName()))
                 .build();
         this.sendEmail(emailDTO);
     }

@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class RegisterUserResponse {
+public abstract class UserRegistrationResponse {
 
     private String firstName;
     private String lastName;

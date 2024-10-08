@@ -4,7 +4,7 @@ import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.response.LoginResponse;
-import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.app.service.implementation.EmailServiceImpl;
@@ -25,14 +25,14 @@ public class AuthController {
     @Autowired
     EmailServiceImpl emailService;
 
-    @PostMapping("/register")
-    public ResponseEntity<RegisterUserResponse> register(
+    @PostMapping("/signup")
+    public ResponseEntity<UserRegistrationResponse> signup(
             @RequestBody RegisterUserRequest request
     ) {
 
         validateUserTypeFields(request);
 
-        RegisterUserResponse response = authService.register(request);
+        UserRegistrationResponse response = authService.signup(request);
 
         emailService.sendConfirmUserEmail(response);
 
@@ -64,8 +64,8 @@ public class AuthController {
 
     }
 
-    @PutMapping("/enableUser")
-    public ResponseEntity<RegisterUserResponse> enableUser(
+    @PutMapping("/confirmUser")
+    public ResponseEntity<UserRegistrationResponse> confirmUser(
             HttpServletRequest request
     ) {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -76,7 +76,7 @@ public class AuthController {
 
         String token = authHeader.substring(7);
 
-        RegisterUserResponse response = authService.enableUser(token);
+        UserRegistrationResponse response = authService.confirmUser(token);
 
 
         return ResponseEntity.status(HttpStatus.OK).body(response);

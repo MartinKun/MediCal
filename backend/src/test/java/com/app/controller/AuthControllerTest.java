@@ -2,9 +2,9 @@ package com.app.controller;
 
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.RegisterUserRequest;
-import com.app.controller.dto.response.RegisterDoctorResponse;
-import com.app.controller.dto.response.RegisterPatientResponse;
-import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.controller.dto.response.DoctorRegistrationResponse;
+import com.app.controller.dto.response.PatientRegistrationResponse;
+import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.app.service.implementation.EmailServiceImpl;
@@ -93,7 +93,7 @@ public class AuthControllerTest {
     @DisplayName("Test 1: successful patient registration")
     public void testRegisterPatient() throws Exception {
 
-        RegisterUserResponse patientResponse = RegisterPatientResponse
+        UserRegistrationResponse patientResponse = PatientRegistrationResponse
                 .builder()
                 .address("123 Street")
                 .build();
@@ -106,11 +106,11 @@ public class AuthControllerTest {
         patientResponse.setPhone("123456");
         patientResponse.setRole(RoleEnum.PATIENT);
 
-        when(authServiceImpl.register(any(RegisterUserRequest.class))).thenReturn(patientResponse);
+        when(authServiceImpl.signup(any(RegisterUserRequest.class))).thenReturn(patientResponse);
 
         this.mockMvc
                 .perform(
-                        post("/api/v1/auth/register")
+                        post("/api/v1/auth/signup")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(patientRequest))
                                 .with(csrf()))
@@ -126,14 +126,14 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.role").value("PATIENT"))
                 .andExpect(jsonPath("$.enabled").value(false));
 
-        verify(authServiceImpl).register(any(RegisterUserRequest.class));
+        verify(authServiceImpl).signup(any(RegisterUserRequest.class));
     }
 
     @Test
     @Order(2)
     @DisplayName("Test 2: successful doctor registration")
     public void testRegisterDoctor() throws Exception {
-        RegisterUserResponse doctorResponse = RegisterDoctorResponse.builder()
+        UserRegistrationResponse doctorResponse = DoctorRegistrationResponse.builder()
                 .license("LICENSE123")
                 .speciality("Cardiology")
                 .officeAddress("456 Avenue")
@@ -147,11 +147,11 @@ public class AuthControllerTest {
         doctorResponse.setPhone("123456");
         doctorResponse.setRole(RoleEnum.DOCTOR);
 
-        when(authServiceImpl.register(any(RegisterUserRequest.class))).thenReturn(doctorResponse);
+        when(authServiceImpl.signup(any(RegisterUserRequest.class))).thenReturn(doctorResponse);
 
         this.mockMvc
                 .perform(
-                        post("/api/v1/auth/register")
+                        post("/api/v1/auth/signup")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(doctorRequest))
                                 .with(csrf()))
@@ -169,7 +169,7 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.role").value("DOCTOR"))
                 .andExpect(jsonPath("$.enabled").value(false));
 
-        verify(authServiceImpl).register(any(RegisterUserRequest.class));
+        verify(authServiceImpl).signup(any(RegisterUserRequest.class));
     }
 
     @Test
@@ -178,10 +178,10 @@ public class AuthControllerTest {
     public void testRegisterPatientMissingFields() throws Exception {
         patientRequest.setAddress(null);
 
-        when(authServiceImpl.register(any(RegisterUserRequest.class)))
+        when(authServiceImpl.signup(any(RegisterUserRequest.class)))
                 .thenThrow(new IncompleteFieldsException("Incomplete fields for Patient"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(patientRequest)))
                 .andExpect(status().isBadRequest())
@@ -195,10 +195,10 @@ public class AuthControllerTest {
     public void testRegisterDoctorMissingFields() throws Exception {
         doctorRequest.setOfficeAddress(null);
 
-        when(authServiceImpl.register(any(RegisterUserRequest.class)))
+        when(authServiceImpl.signup(any(RegisterUserRequest.class)))
                 .thenThrow(new IncompleteFieldsException("Incomplete fields for Doctor"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(patientRequest)))
                 .andExpect(status().isBadRequest())
@@ -212,7 +212,7 @@ public class AuthControllerTest {
     public void testEnableUser() throws Exception {
         String validToken = "Bearer validJwtToken";
 
-        RegisterUserResponse patientResponse = RegisterPatientResponse
+        UserRegistrationResponse patientResponse = PatientRegistrationResponse
                 .builder()
                 .address("123 Street")
                 .build();
@@ -226,9 +226,9 @@ public class AuthControllerTest {
         patientResponse.setRole(RoleEnum.PATIENT);
         patientResponse.setEnabled(true);
 
-        when(authServiceImpl.enableUser(any(String.class))).thenReturn(patientResponse);
+        when(authServiceImpl.confirmUser(any(String.class))).thenReturn(patientResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/enableUser")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/confirmUser")
                         .header(HttpHeaders.AUTHORIZATION, validToken)
                         .with(csrf()))
                 .andExpect(status().isOk())
@@ -243,7 +243,7 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.role").value("PATIENT"))
                 .andExpect(jsonPath("$.enabled").value(true));
 
-        verify(authServiceImpl).enableUser(any(String.class));
+        verify(authServiceImpl).confirmUser(any(String.class));
     }
 
 }

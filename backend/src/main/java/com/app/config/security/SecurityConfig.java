@@ -34,11 +34,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(http -> {
 
                     // PUBLIC Endpoints
-                    http.requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll();
 
                     // PRIVATE Endpoints
-                    http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/enableUser").authenticated();
+                    http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/confirmUser").authenticated();
 
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils), BasicAuthenticationFilter.class)

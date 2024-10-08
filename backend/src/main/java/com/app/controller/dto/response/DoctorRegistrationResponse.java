@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class RegisterDoctorResponse extends RegisterUserResponse{
+public class DoctorRegistrationResponse extends UserRegistrationResponse {
     private String speciality;
     private String license;
     private String officeAddress;

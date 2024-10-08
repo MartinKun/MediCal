@@ -1,12 +1,12 @@
 package com.app.service;
 
 import com.app.controller.dto.EmailDTO;
-import com.app.controller.dto.response.RegisterUserResponse;
+import com.app.controller.dto.response.UserRegistrationResponse;
 
 public interface EmailService {
 
     void sendEmail(EmailDTO emailDTO);
 
-    void sendConfirmUserEmail(RegisterUserResponse registerUserResponse);
+    void sendConfirmUserEmail(UserRegistrationResponse userRegistrationResponse);
 
 }
