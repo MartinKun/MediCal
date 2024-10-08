@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.springframework.test.annotation.Rollback;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -22,12 +23,11 @@ public class UserRepositoryUnitTest {
     private UserRepository userRepository;
 
     @Test
-    @DisplayName("Test 1:Save Patient User Test")
+    @DisplayName("Test 1: Save and Find Patient User by Email")
     @Order(1)
     @Rollback(value = false)
-    public void savePatientUserTest(){
-
-        //Action
+    public void saveAndFindPatientUserByEmailTest() {
+        // Arrange
         User user = Patient.builder()
                 .address("Mitre 123")
                 .build();
@@ -40,19 +40,22 @@ public class UserRepositoryUnitTest {
         user.setPhone("123456789");
         user.setEnabled(false);
 
-       Patient response = (Patient) userRepository.save(user);
+        // Act
+        userRepository.save(user);
 
-        //Verify
-        assertEquals("Mitre 123", response.getAddress());
+        // Verify
+        Optional<User> retrievedUser = userRepository.findUserByEmail("johndoe@mail.com");
+        assertTrue(retrievedUser.isPresent());
+        assertEquals("John", retrievedUser.get().getFirstName());
+        assertEquals("Doe", retrievedUser.get().getLastName());
     }
 
     @Test
-    @DisplayName("Test 2:Save Doctor User Test")
+    @DisplayName("Test 2: Save and Find Doctor User by Email")
     @Order(2)
     @Rollback(value = false)
-    public void saveDoctorUserTest(){
-
-        //Action
+    public void saveAndFindDoctorUserByEmailTest() {
+        // Arrange
         User user = Doctor.builder()
                 .speciality("Cardiology")
                 .license("MD123456")
@@ -60,20 +63,21 @@ public class UserRepositoryUnitTest {
                 .build();
         user.setFirstName("John");
         user.setLastName("Doe");
-        user.setEmail("johndoe@mail.com");
+        user.setEmail("doctordoe@mail.com");
         user.setPassword("1234567");
         user.setBirthDate(LocalDate.of(1990, 1, 1));
         user.setGender("male");
         user.setPhone("123456789");
         user.setEnabled(false);
 
-        Doctor response = (Doctor) userRepository.save(user);
+        // Act
+        userRepository.save(user);
 
-        //Verify
-        assertEquals("Cardiology", response.getSpeciality());
-        assertEquals("MD123456", response.getLicense());
-        assertEquals("123 Main St, Springfield", response.getOfficeAddress());
+        // Verify
+        Optional<User> retrievedUser = userRepository.findUserByEmail("doctordoe@mail.com");
+        assertTrue(retrievedUser.isPresent());
+        assertEquals("Cardiology", ((Doctor) retrievedUser.get()).getSpeciality());
+        assertEquals("MD123456", ((Doctor) retrievedUser.get()).getLicense());
+        assertEquals("123 Main St, Springfield", ((Doctor) retrievedUser.get()).getOfficeAddress());
     }
-
-
 }

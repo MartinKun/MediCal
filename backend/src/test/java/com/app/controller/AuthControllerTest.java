@@ -1,8 +1,10 @@
 package com.app.controller;
 
 import com.app.controller.dto.enums.RoleEnum;
+import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
+import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.exception.IncompleteFieldsException;
@@ -244,6 +246,34 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.enabled").value(true));
 
         verify(authServiceImpl).confirmUser(any(String.class));
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("Test 6: Login User Successfully")
+    public void testLoginUser() throws Exception {
+
+        LoginRequest request = LoginRequest.builder()
+                .email("janesmith@mail.com")
+                .password("password123")
+                .build();
+
+        LoginResponse response = LoginResponse.builder()
+                .token("validToken")
+                .build();
+
+        when(authServiceImpl.login(any(LoginRequest.class))).thenReturn(response);
+
+        this.mockMvc
+                .perform(
+                        post("/api/v1/auth/login")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(request))
+                                .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token").value("validToken"));
+
+        verify(authServiceImpl).login(any(LoginRequest.class));
     }
 
 }

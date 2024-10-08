@@ -1,8 +1,10 @@
 package com.app.service;
 
 import com.app.controller.dto.enums.RoleEnum;
+import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
+import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.persistence.entity.Doctor;
@@ -18,6 +20,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
@@ -47,6 +52,12 @@ public class AuthServiceImplTest {
 
     private DecodedJWT decodedJWT;
     private User user;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    private LoginRequest loginRequest;
+    private Authentication authentication;
 
     @BeforeEach
     public void setup() {
@@ -88,6 +99,13 @@ public class AuthServiceImplTest {
         user.setGender("male");
         user.setPhone("123456789");
         user.setEnabled(false);
+
+        loginRequest = LoginRequest.builder()
+                .email("johndoe@mail.com")
+                .password("1234567")
+                .build();
+
+        authentication = Mockito.mock(Authentication.class);
     }
 
     @Test
@@ -186,5 +204,29 @@ public class AuthServiceImplTest {
 
         Mockito.verify(userRepository).save(user);
         assertTrue(user.isEnabled());
+    }
+
+    @Test
+    @DisplayName("Test 4: User Login Successfully")
+    @Order(4)
+    public void loginUserTest() {
+        // Arrange
+        String token = "generatedJwtToken";
+
+        Mockito.when(authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+        )).thenReturn(authentication);
+
+        Mockito.when(jwtUtils.createAccessToken(authentication)).thenReturn(token);
+
+        // Act
+        LoginResponse response = authServiceImpl.login(loginRequest);
+
+        // Assert
+        assertNotNull(response);
+        assertEquals(token, response.getToken());
+
+        Mockito.verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        Mockito.verify(jwtUtils).createAccessToken(authentication);
     }
 }
