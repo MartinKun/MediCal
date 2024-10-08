@@ -35,6 +35,7 @@ public class SecurityConfig {
 
                     // PUBLIC Endpoints
                     http.requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll();
 
                     // PRIVATE Endpoints
                     http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/enableUser").authenticated();

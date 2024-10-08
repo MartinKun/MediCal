@@ -1,7 +1,9 @@
 package com.app.service.implementation;
 
 import com.app.controller.dto.enums.RoleEnum;
+import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
+import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.RegisterDoctorResponse;
 import com.app.controller.dto.response.RegisterPatientResponse;
 import com.app.controller.dto.response.RegisterUserResponse;
@@ -13,6 +15,10 @@ import com.app.service.AuthService;
 import com.app.util.JwtUtils;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,16 +33,38 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @Override
     public RegisterUserResponse register(RegisterUserRequest request) {
 
-        User userEntity = createUserEntity(request);
+        User user = createUserEntity(request);
 
-        userEntity.setEnabled(false);
+        user.setEnabled(false);
 
-        User user = userRepository.save(userEntity);
+        User response = userRepository.save(user);
 
-        return createRegisterUserResponse(user);
+        return createRegisterUserResponse(response);
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest request) {
+
+        Authentication authentication =
+                authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(
+                                request.getEmail(),
+                                request.getPassword()
+                        )
+                );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = jwtUtils.createAccessToken(authentication);
+
+        return LoginResponse.builder()
+                .token(token)
+                .build();
     }
 
     @Override
@@ -47,8 +75,8 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findUserByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User does not exist"));
-        user.setEnabled(true);
 
+        user.setEnabled(true);
         User response = userRepository.save(user);
 
         return createRegisterUserResponse(response);

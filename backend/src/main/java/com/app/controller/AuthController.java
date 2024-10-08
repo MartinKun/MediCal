@@ -1,7 +1,9 @@
 package com.app.controller;
 
+import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.enums.RoleEnum;
+import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.RegisterUserResponse;
 import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
@@ -51,6 +53,15 @@ public class AuthController {
                 throw new IncompleteFieldsException("Incomplete fields for Patient");
             }
         }
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> login(
+            @RequestBody LoginRequest request
+    ){
+        LoginResponse response = authService.login(request);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
     @PutMapping("/enableUser")
