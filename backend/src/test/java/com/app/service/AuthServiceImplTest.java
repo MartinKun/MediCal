@@ -2,6 +2,7 @@ package com.app.service;
 
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
+import com.app.controller.dto.request.RecoveryPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
@@ -228,5 +229,33 @@ public class AuthServiceImplTest {
 
         Mockito.verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         Mockito.verify(jwtUtils).createAccessToken(authentication);
+    }
+
+    @Test
+    @DisplayName("Test: Recover Password Successfully")
+    @Order(5)
+    public void testRecoveryPassword() {
+        // Arrange
+        RecoveryPassRequest request = RecoveryPassRequest.builder()
+                .email("johndoe@mail.com")
+                .build();
+
+        User user = new Patient();
+        user.setEmail(request.getEmail());
+        user.setPassword("oldEncodedPassword123");
+        user.setEnabled(true);
+
+        String newPassword = user.getPassword().substring(0, 8);
+
+        Mockito.when(userRepository.findUserByEmail(request.getEmail())).thenReturn(Optional.of(user));
+        Mockito.when(passwordEncoder.encode(any(String.class))).thenReturn("newEncodedPassword");
+
+        // Act
+        String result = authServiceImpl.recoveryPassword(request);
+
+        // Assert
+        assertEquals(newPassword, result);  // Verifica que se generó correctamente la nueva contraseña
+        Mockito.verify(userRepository).save(user);  // Verifica que el usuario se guardó
+        Mockito.verify(passwordEncoder).encode(newPassword);  // Verifica que la nueva contraseña fue encriptada
     }
 }

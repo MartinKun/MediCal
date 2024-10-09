@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
+import com.app.controller.dto.request.RecoveryPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
@@ -24,14 +25,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
-import static org.mockito.Mockito.verify;
 import static org.mockito.ArgumentMatchers.any;
 
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.jupiter.api.*;
 
 @WebMvcTest(AuthController.class)
@@ -274,6 +274,30 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.token").value("validToken"));
 
         verify(authServiceImpl).login(any(LoginRequest.class));
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("Test 7: Recover Password Successfully")
+    public void testRecoveryPassword() throws Exception {
+        RecoveryPassRequest request = RecoveryPassRequest.builder()
+                .email("johndoe@mail.com")
+                .build();
+
+        String newPassword = "newPassword123";
+
+        when(authServiceImpl.recoveryPassword(any(RecoveryPassRequest.class))).thenReturn(newPassword);
+        doNothing().when(emailServiceImpl).sendRecoveryPassEmail(anyString(), anyString());
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/recoveryPassword")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("An email was sent with a new password."));
+
+        verify(authServiceImpl).recoveryPassword(any(RecoveryPassRequest.class));
+        verify(emailServiceImpl).sendRecoveryPassEmail(anyString(), anyString());
     }
 
 }
