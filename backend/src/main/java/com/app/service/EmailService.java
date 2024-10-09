@@ -9,4 +9,5 @@ public interface EmailService {
 
     void sendConfirmUserEmail(UserRegistrationResponse userRegistrationResponse);
 
+    void sendRecoveryPassEmail(String email, String newPassword);
 }

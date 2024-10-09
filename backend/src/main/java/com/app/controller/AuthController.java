@@ -1,6 +1,7 @@
 package com.app.controller;
 
 import com.app.controller.dto.request.LoginRequest;
+import com.app.controller.dto.request.RecoveryPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.response.LoginResponse;
@@ -81,4 +82,17 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
+    @PutMapping("/recoveryPassword")
+    public ResponseEntity<String> recoveryPassword(
+            @RequestBody RecoveryPassRequest request
+            ){
+        String newPassword = authService.recoveryPassword(request);
+
+        emailService.sendRecoveryPassEmail(request.getEmail(), newPassword);
+
+        return ResponseEntity.status(HttpStatus.OK).body("An email was sent with a new password.");
+
+    }
+
 }

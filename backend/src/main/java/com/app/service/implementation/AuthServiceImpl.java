@@ -2,6 +2,7 @@ package com.app.service.implementation;
 
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
+import com.app.controller.dto.request.RecoveryPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
@@ -80,6 +81,21 @@ public class AuthServiceImpl implements AuthService {
         User response = userRepository.save(user);
 
         return createUserRegistrationResponse(response);
+    }
+
+    @Override
+    public String recoveryPassword(RecoveryPassRequest request) {
+
+        User user = userRepository.findUserByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User does not exist"));
+        if(!user.isEnabled()) throw new RuntimeException("User is disabled");
+
+        String newPassword = user.getPassword().substring(0, 8);
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        return newPassword;
     }
 
 

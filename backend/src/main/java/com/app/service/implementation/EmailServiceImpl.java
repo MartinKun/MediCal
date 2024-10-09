@@ -91,4 +91,15 @@ public class EmailServiceImpl implements EmailService {
                 .build();
         this.sendEmail(emailDTO);
     }
+
+    @Override
+    public void sendRecoveryPassEmail(String email, String newPassword) {
+
+        EmailDTO emailDTO = EmailDTO.builder()
+                .recipient(email)
+                .subject("Recuperación de contraseña en Medical")
+                .body(EmailTemplates.getRecoveryPassEmailTemplate(newPassword))
+                .build();
+        this.sendEmail(emailDTO);
+    }
 }
