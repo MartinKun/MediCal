@@ -1,7 +1,6 @@
 "use client";
-import { DoctorProfileForm } from "@/components/form/DoctorProfileForm";
-import { PatientProfileForm } from "@/components/form/PatientProfileForm";
-import { Card } from "@/components/others/Card";
+
+import { Card, DoctorProfileForm, PatientProfileForm } from "@/components";
 
 export default function Profile() {
   let userType = "patient";

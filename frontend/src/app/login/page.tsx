@@ -1,6 +1,5 @@
 "use client";
-import { LoginForm } from "@/components/form/LoginForm";
-import { Card } from "@/components/others/Card";
+import { Card, LoginForm } from "@/components";
 import Link from "next/link";
 
 export default function Login() {

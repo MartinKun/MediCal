@@ -1,10 +1,12 @@
 "use client";
-import { AddAppointmentForm } from "@/components/appointment/AddAppointmentForm";
-import { AppointmentDetail } from "@/components/appointment/AppointmentDetail";
-import { AppointmentsList } from "@/components/appointment/AppointmentsList";
-import { Calendar } from "@/components/calendar/Calendar";
-import { Modal } from "@/components/modal/Modal";
-import { Card } from "@/components/others/Card";
+import {
+  AddAppointmentForm,
+  AppointmentDetail,
+  AppointmentsList,
+  Calendar,
+  Card,
+  Modal,
+} from "@/components";
 import useWindowWidth from "@/hook/useWindowWidth";
 import { AppointmentI } from "@/interfaces/appointmentInterface";
 import { useState } from "react";

@@ -1,6 +1,6 @@
 "use client";
-import { NotificationList } from "@/components/notification/NotificationList";
-import { Card } from "@/components/others/Card";
+
+import { Card, NotificationList } from "@/components";
 
 export default function MyNotifications() {
   return (

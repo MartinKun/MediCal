@@ -1,6 +1,5 @@
 "use client";
-import { RecoveryPasswordForm } from "@/components/form/RecoveryPasswordForm";
-import { Card } from "@/components/others/Card";
+import { Card, RecoveryPasswordForm } from "@/components";
 import Link from "next/link";
 
 export default function RecoveryPassword() {

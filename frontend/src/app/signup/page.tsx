@@ -1,8 +1,10 @@
 "use client";
-import { DoctorSignupForm } from "@/components/form/DoctorSignupForm";
-import { PatientSignupForm } from "@/components/form/PatientSignupForm";
-import { UserTypeToggle } from "@/components/form/UserTypeToggle";
-import { Card } from "@/components/others/Card";
+import {
+  Card,
+  DoctorSignupForm,
+  PatientSignupForm,
+  UserTypeToggle,
+} from "@/components";
 import { useState } from "react";
 
 export default function Signup() {

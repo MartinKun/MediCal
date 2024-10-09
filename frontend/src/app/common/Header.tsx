@@ -1,7 +1,6 @@
 "use client";
 
-import { PrivateNav } from "@/components/nav/PrivateNav";
-import { PublicNav } from "@/components/nav/PublicNav";
+import { PrivateNav, PublicNav } from "@/components";
 
 const Header: React.FC = () => {
   const user = false;
