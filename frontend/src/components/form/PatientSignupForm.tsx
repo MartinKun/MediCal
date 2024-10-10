@@ -1,3 +1,4 @@
+"use client";
 import useFormState from "@/hook/useForm";
 import { InputWithIcon } from "./InputWithIcon";
 import { SubmitButton } from "./SubmitButton";

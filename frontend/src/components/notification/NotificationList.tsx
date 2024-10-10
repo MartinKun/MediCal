@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { NotificationCard } from "./NotificationCard";
 import { notificationsData } from "@/util/data";

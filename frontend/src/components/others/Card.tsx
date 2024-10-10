@@ -6,7 +6,7 @@ type Props = {
     href: string;
     value: string;
   };
-  title: string;
+  title?: string;
 } & React.ComponentProps<"div">;
 
 export const Card = ({ backTo, title, children }: Props) => {
@@ -19,6 +19,9 @@ export const Card = ({ backTo, title, children }: Props) => {
                  p-8
                  shadow-lg"
     >
+      <p>
+        <div></div>
+      </p>
       {backTo && (
         <Link
           href={backTo.href}

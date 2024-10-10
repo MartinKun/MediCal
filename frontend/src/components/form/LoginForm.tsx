@@ -1,3 +1,4 @@
+"use client";
 import { InputWithIcon } from "./InputWithIcon";
 import { loginInputFields } from "@/util/inputFields";
 import { SubmitButton } from "./SubmitButton";

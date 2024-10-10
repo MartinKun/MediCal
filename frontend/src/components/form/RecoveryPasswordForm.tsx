@@ -1,3 +1,4 @@
+"use client";
 import useFormState from "@/hook/useForm";
 import { MailIcon } from "lucide-react";
 import { InputWithIcon } from "./InputWithIcon";

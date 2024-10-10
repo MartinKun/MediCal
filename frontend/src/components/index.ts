@@ -14,3 +14,4 @@ export { Calendar } from "./calendar/Calendar";
 export { LoginForm } from "./form/LoginForm";
 export { PrivateNav } from "./nav/PrivateNav";
 export { PublicNav } from "./nav/PublicNav";
+export { Loader } from "./others/Loader";
