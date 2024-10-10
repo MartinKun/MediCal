@@ -3,6 +3,7 @@ import { InputWithIcon } from "./InputWithIcon";
 import { SubmitButton } from "./SubmitButton";
 import { Select } from "./Select";
 import { signupInputFields } from "@/util/inputFields";
+import services from "@/services";
 
 export const PatientSignupForm = () => {
   const { formState, setFormState } = useFormState({
@@ -16,8 +17,30 @@ export const PatientSignupForm = () => {
     password: "",
   });
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newPatient = {
+      firstName: formState.firstName,
+      lastName: formState.lastName,
+      birthDate: new Date(formState.birthDate),
+      gender: formState.gender,
+      address: formState.address,
+      phone: formState.phone,
+      email: formState.email,
+      password: formState.password,
+      role: "PATIENT",
+    };
+
+    try {
+      const response = await services.signup(newPatient);
+      console.log("User signed up successfully:", response.data);
+    } catch (error) {
+      console.error("Signup failed:", error);
+    }
+  };
+
   return (
-    <form className="space-y-6">
+    <form className="space-y-6" onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {signupInputFields
           .filter((_, index) => ![5, 6, 10].includes(index))
