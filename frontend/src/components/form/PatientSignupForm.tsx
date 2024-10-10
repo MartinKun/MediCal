@@ -5,8 +5,12 @@ import { SubmitButton } from "./SubmitButton";
 import { Select } from "./Select";
 import { signupInputFields } from "@/util/inputFields";
 import services from "@/services";
+import { useBoundStore } from "@/store/store";
+import { useRouter } from "next/navigation";
 
 export const PatientSignupForm = () => {
+  const showLoader = useBoundStore((state) => state.showLoader);
+  const hideLoader = useBoundStore((state) => state.hideLoader);
   const { formState, setFormState } = useFormState({
     firstName: "",
     lastName: "",
@@ -17,6 +21,8 @@ export const PatientSignupForm = () => {
     email: "",
     password: "",
   });
+
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,8 +39,12 @@ export const PatientSignupForm = () => {
     };
 
     try {
+      showLoader();
       const response = await services.signup(newPatient);
       console.log("User signed up successfully:", response.data);
+
+      router.push("/signup/success");
+      hideLoader();
     } catch (error) {
       console.error("Signup failed:", error);
     }
