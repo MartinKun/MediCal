@@ -10,12 +10,12 @@ export const Loader = () => {
   return (
     <div
       className="fixed
-                    inset-0
-                    z-[400]
-                    bg-gradient-to-br
-                    from-purple-400
-                    via-pink-500
-                    to-red-500"
+                 inset-0
+                 z-[400]
+                 bg-gradient-to-br
+                 from-purple-400
+                 via-pink-500
+                 to-red-500"
     >
       <div
         className="fixed

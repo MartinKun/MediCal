@@ -4,8 +4,13 @@ import { SubmitButton } from "./SubmitButton";
 import { InputWithIcon } from "./InputWithIcon";
 import { Select } from "./Select";
 import { signupInputFields } from "@/util/inputFields";
+import { useRouter } from "next/navigation";
+import services from "@/services";
+import { useBoundStore } from "@/store/store";
 
 export const DoctorSignupForm = () => {
+  const showLoader = useBoundStore((state) => state.showLoader);
+  const hideLoader = useBoundStore((state) => state.hideLoader);
   const { formState, setFormState } = useFormState({
     firstName: "",
     lastName: "",
@@ -19,8 +24,39 @@ export const DoctorSignupForm = () => {
     officeAddress: "",
   });
 
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const newDoctor = {
+      firstName: formState.firstName,
+      lastName: formState.lastName,
+      birthDate: new Date(formState.birthDate),
+      gender: formState.gender,
+      specialty: formState.specialty,
+      license: formState.license,
+      phone: formState.phone,
+      email: formState.email,
+      password: formState.password,
+      officeAddress: formState.officeAddress,
+      role: "DOCTOR",
+    };
+
+    try {
+      showLoader();
+      const response = await services.signup(newDoctor);
+      if (response) {
+        router.push("/signup/success");
+        hideLoader();
+      }
+    } catch (error) {
+      hideLoader();
+      console.error("Signup failed:", error);
+    }
+  };
+
   return (
-    <form className="space-y-6">
+    <form className="space-y-6" onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {signupInputFields
           .filter((_, index) => index !== 4)

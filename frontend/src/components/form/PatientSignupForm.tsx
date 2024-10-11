@@ -41,11 +41,12 @@ export const PatientSignupForm = () => {
     try {
       showLoader();
       const response = await services.signup(newPatient);
-      console.log("User signed up successfully:", response.data);
-
-      router.push("/signup/success");
-      hideLoader();
+      if (response) {
+        router.push("/signup/success");
+        hideLoader();
+      }
     } catch (error) {
+      hideLoader();
       console.error("Signup failed:", error);
     }
   };
