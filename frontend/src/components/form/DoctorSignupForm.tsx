@@ -47,11 +47,14 @@ export const DoctorSignupForm = () => {
       const response = await services.signup(newDoctor);
       if (response) {
         router.push("/signup/success");
-        hideLoader();
+      } else {
+        router.push("/signup/failure");
       }
     } catch (error) {
-      hideLoader();
+      router.push("/signup/failure");
       console.error("Signup failed:", error);
+    } finally {
+      hideLoader();
     }
   };
 
