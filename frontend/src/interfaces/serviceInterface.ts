@@ -12,4 +12,8 @@ export interface ServiceI {
     email: string;
     password: string;
   };
+  loginUser: {
+    email: string;
+    password: string;
+  };
 }
