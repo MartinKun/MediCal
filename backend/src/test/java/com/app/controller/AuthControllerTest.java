@@ -1,6 +1,7 @@
 package com.app.controller;
 
 import com.app.controller.dto.enums.RoleEnum;
+import com.app.controller.dto.request.ConfirmUserRequest;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RecoveryPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
@@ -16,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -112,7 +112,7 @@ public class AuthControllerTest {
 
         this.mockMvc
                 .perform(
-                        post("/api/v1/auth/signup")
+                        post("/api/v1/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(patientRequest))
                                 .with(csrf()))
@@ -153,7 +153,7 @@ public class AuthControllerTest {
 
         this.mockMvc
                 .perform(
-                        post("/api/v1/auth/signup")
+                        post("/api/v1/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(doctorRequest))
                                 .with(csrf()))
@@ -183,7 +183,7 @@ public class AuthControllerTest {
         when(authServiceImpl.signup(any(RegisterUserRequest.class)))
                 .thenThrow(new IncompleteFieldsException("Incomplete fields for Patient"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signup")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(patientRequest)))
                 .andExpect(status().isBadRequest())
@@ -200,7 +200,7 @@ public class AuthControllerTest {
         when(authServiceImpl.signup(any(RegisterUserRequest.class)))
                 .thenThrow(new IncompleteFieldsException("Incomplete fields for Doctor"));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/signup")
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(patientRequest)))
                 .andExpect(status().isBadRequest())
@@ -212,7 +212,10 @@ public class AuthControllerTest {
     @Order(5)
     @DisplayName("Test 5: enable user with valid token")
     public void testEnableUser() throws Exception {
-        String validToken = "Bearer validJwtToken";
+
+        ConfirmUserRequest confirmUserRequest = ConfirmUserRequest.builder()
+                .token("validJwtToken")
+                .build();
 
         UserRegistrationResponse patientResponse = PatientRegistrationResponse
                 .builder()
@@ -230,8 +233,9 @@ public class AuthControllerTest {
 
         when(authServiceImpl.confirmUser(any(String.class))).thenReturn(patientResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/confirmUser")
-                        .header(HttpHeaders.AUTHORIZATION, validToken)
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/confirm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(confirmUserRequest))
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("John"))
@@ -278,8 +282,8 @@ public class AuthControllerTest {
 
     @Test
     @Order(7)
-    @DisplayName("Test 7: Recover Password Successfully")
-    public void testRecoveryPassword() throws Exception {
+    @DisplayName("Test 7: Forgot Password Successfully")
+    public void testForgotPassword() throws Exception {
         RecoveryPassRequest request = RecoveryPassRequest.builder()
                 .email("johndoe@mail.com")
                 .build();
@@ -289,7 +293,7 @@ public class AuthControllerTest {
         when(authServiceImpl.recoveryPassword(any(RecoveryPassRequest.class))).thenReturn(newPassword);
         doNothing().when(emailServiceImpl).sendRecoveryPassEmail(anyString(), anyString());
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/recoveryPassword")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/forgot-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .with(csrf()))
