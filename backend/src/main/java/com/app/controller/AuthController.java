@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import com.app.controller.dto.request.ConfirmUserRequest;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RecoveryPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
@@ -67,18 +68,11 @@ public class AuthController {
 
     @PutMapping("/confirm")
     public ResponseEntity<UserRegistrationResponse> confirmUser(
-            HttpServletRequest request
+            @RequestBody ConfirmUserRequest request
     ) {
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            throw new RuntimeException("Invalid token");
-        }
-
-        String token = authHeader.substring(7);
+        String token = request.getToken();
 
         UserRegistrationResponse response = authService.confirmUser(token);
-
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
