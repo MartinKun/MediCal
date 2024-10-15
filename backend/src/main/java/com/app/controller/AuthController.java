@@ -26,8 +26,8 @@ public class AuthController {
     @Autowired
     EmailServiceImpl emailService;
 
-    @PostMapping("/signup")
-    public ResponseEntity<UserRegistrationResponse> signup(
+    @PostMapping("/register")
+    public ResponseEntity<UserRegistrationResponse> register(
             @RequestBody RegisterUserRequest request
     ) {
 
@@ -65,7 +65,7 @@ public class AuthController {
 
     }
 
-    @PutMapping("/confirmUser")
+    @PutMapping("/confirm")
     public ResponseEntity<UserRegistrationResponse> confirmUser(
             HttpServletRequest request
     ) {
@@ -83,8 +83,8 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PutMapping("/recoveryPassword")
-    public ResponseEntity<String> recoveryPassword(
+    @PutMapping("/forgot-password")
+    public ResponseEntity<String> forgotPassword(
             @RequestBody RecoveryPassRequest request
             ){
         String newPassword = authService.recoveryPassword(request);

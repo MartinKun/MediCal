@@ -49,12 +49,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(http -> {
 
                     // PUBLIC Endpoints
-                    http.requestMatchers(HttpMethod.POST, "/api/v1/auth/signup").permitAll();
+                    http.requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll();
-                    http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/recoveryPassword").permitAll();
+                    http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/forgot-password").permitAll();
 
                     // PRIVATE Endpoints
-                    http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/confirmUser").authenticated();
+                    http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/confirm").authenticated();
 
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils), BasicAuthenticationFilter.class)
