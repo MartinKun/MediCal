@@ -4,7 +4,7 @@ import { MailIcon } from "lucide-react";
 import { InputWithIcon } from "./InputWithIcon";
 import { SubmitButton } from "./SubmitButton";
 
-export const RecoveryPasswordForm = () => {
+export const ForgotPasswordForm = () => {
   const { formState, setFormState } = useFormState({ email: "" });
   return (
     <form className="space-y-6">

@@ -70,7 +70,7 @@ export const PublicNav = () => {
                      px-4
                      py-2
                      rounded-lg"
-          href={"/signup"}
+          href={"/register"}
         >
           Registrarme
         </Link>

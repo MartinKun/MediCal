@@ -1,8 +1,8 @@
 "use client";
 import {
   Card,
-  DoctorSignupForm,
-  PatientSignupForm,
+  DoctorRegistrationForm,
+  PatientRegistrationForm,
   UserTypeToggle,
 } from "@/components";
 import { useState } from "react";
@@ -20,7 +20,11 @@ export default function Signup() {
     >
       <Card title={"Registrarme"}>
         <UserTypeToggle setUserType={setUserType} userType={userType} />
-        {userType === "patient" ? <PatientSignupForm /> : <DoctorSignupForm />}
+        {userType === "patient" ? (
+          <PatientRegistrationForm />
+        ) : (
+          <DoctorRegistrationForm />
+        )}
       </Card>
     </section>
   );

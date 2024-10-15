@@ -1,5 +1,5 @@
 "use client";
-import { Card, RecoveryPasswordForm } from "@/components";
+import { Card, ForgotPasswordForm } from "@/components";
 import Link from "next/link";
 
 export default function RecoveryPassword() {
@@ -15,7 +15,7 @@ export default function RecoveryPassword() {
         backTo={{ href: "/login", value: "Volver al inicio de sesión" }}
         title={"Recuperar Contraseña"}
       >
-        <RecoveryPasswordForm />
+        <ForgotPasswordForm />
         <p
           className="mt-6
                      text-center

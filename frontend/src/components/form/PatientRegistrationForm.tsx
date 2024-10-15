@@ -1,14 +1,14 @@
 "use client";
 import useFormState from "@/hook/useForm";
-import { SubmitButton } from "./SubmitButton";
 import { InputWithIcon } from "./InputWithIcon";
+import { SubmitButton } from "./SubmitButton";
 import { Select } from "./Select";
 import { signupInputFields } from "@/util/inputFields";
-import { useRouter } from "next/navigation";
 import services from "@/services";
 import { useBoundStore } from "@/store/store";
+import { useRouter } from "next/navigation";
 
-export const DoctorSignupForm = () => {
+export const PatientRegistrationForm = () => {
   const showLoader = useBoundStore((state) => state.showLoader);
   const hideLoader = useBoundStore((state) => state.hideLoader);
   const { formState, setFormState } = useFormState({
@@ -16,43 +16,39 @@ export const DoctorSignupForm = () => {
     lastName: "",
     birthDate: "",
     gender: "",
-    specialty: "",
-    license: "",
+    address: "",
     phone: "",
     email: "",
     password: "",
-    officeAddress: "",
   });
 
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const newDoctor = {
+    const newPatient = {
       firstName: formState.firstName,
       lastName: formState.lastName,
       birthDate: new Date(formState.birthDate),
       gender: formState.gender,
-      specialty: formState.specialty,
-      license: formState.license,
+      address: formState.address,
       phone: formState.phone,
       email: formState.email,
       password: formState.password,
-      officeAddress: formState.officeAddress,
-      role: "DOCTOR",
+      role: "PATIENT",
     };
 
     try {
       showLoader();
-      const response = await services.register(newDoctor);
+      const response = await services.register(newPatient);
       if (response) {
-        router.push("/signup/success");
+        router.push("/register/success");
       } else {
-        router.push("/signup/failure");
+        router.push("/register/failure");
       }
     } catch (error) {
-      router.push("/signup/failure");
-      console.error("Signup failed:", error);
+      router.push("/register/failure");
+      console.error("Registration failed:", error);
     } finally {
       hideLoader();
     }
@@ -62,7 +58,7 @@ export const DoctorSignupForm = () => {
     <form className="space-y-6" onSubmit={handleSubmit}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {signupInputFields
-          .filter((_, index) => index !== 4)
+          .filter((_, index) => ![5, 6, 10].includes(index))
           .map((field, index) =>
             field.type === "select" ? (
               <Select
@@ -70,9 +66,9 @@ export const DoctorSignupForm = () => {
                 name={field.name}
                 label={field.label}
                 options={field.options || []}
-                icon={field.icon}
                 value={formState[field.name as keyof typeof formState]}
                 handleChange={setFormState}
+                icon={field.icon}
               />
             ) : (
               <InputWithIcon

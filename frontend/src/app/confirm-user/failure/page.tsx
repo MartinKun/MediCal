@@ -4,11 +4,11 @@ import { ArrowLeft, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-export default function SignupFailure() {
+export default function ConfirmUserFailure() {
   const router = useRouter();
 
   const handleVolverRegistro = () => {
-    router.push("/signup");
+    router.push("/register");
   };
 
   return (
@@ -61,15 +61,15 @@ export default function SignupFailure() {
                        text-white
                        mb-4"
           >
-            Error al Registrar usuario
+            Error de Confirmación
           </h1>
           <p
             className="text-xl
                        text-white
                        mb-8"
           >
-            Lo sentimos, ha ocurrido un error al registrar el usuario. Por
-            favor, vuelve a la página de registro e intenta nuevamente.
+            Lo sentimos, ha ocurrido un error al confirmar tu cuenta. Por favor,
+            vuelve a la página de registro e intenta nuevamente.
           </p>
           <button
             onClick={handleVolverRegistro}

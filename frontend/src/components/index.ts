@@ -1,8 +1,8 @@
 export { Card } from "./others/Card";
 export { UserTypeToggle } from "./form/UserTypeToggle";
-export { DoctorSignupForm } from "./form/DoctorSignupForm";
-export { PatientSignupForm } from "./form/PatientSignupForm";
-export { RecoveryPasswordForm } from "./form/RecoveryPasswordForm";
+export { DoctorRegistrationForm } from "./form/DoctorRegistrationForm";
+export { PatientRegistrationForm } from "./form/PatientRegistrationForm";
+export { ForgotPasswordForm } from "./form/ForgotPasswordForm";
 export { DoctorProfileForm } from "./form/DoctorProfileForm";
 export { PatientProfileForm } from "./form/PatientProfileForm";
 export { NotificationList } from "./notification/NotificationList";

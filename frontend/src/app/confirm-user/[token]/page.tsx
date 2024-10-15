@@ -1,20 +1,35 @@
 "use client";
 
-import { ArrowLeft, XCircle } from "lucide-react";
+import services from "@/services";
+import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import { useEffect } from "react";
 
-export default function ConfirmUserFailure() {
+export default function ConfirmUser({ params }: { params: { token: string } }) {
   const router = useRouter();
 
-  const handleVolverRegistro = () => {
-    router.push("/signup");
-  };
+  useEffect(() => {
+    const confirmUser = async () => {
+      if (params.token) {
+        try {
+          const response = await services.confirmUser(params.token);
+
+          if (response) {
+            router.push("/confirm-user/success");
+          }
+        } catch (error) {
+          console.error("Confirm user failed:", error);
+          router.push("/confirm-user/failure");
+        }
+      }
+    };
+
+    confirmUser();
+  }, [params.token, router]);
 
   return (
     <div
-      className="fixed
-                 inset-0
+      className="fixed inset-0
                  z-[400]
                  flex
                  items-center
@@ -50,9 +65,10 @@ export default function ConfirmUserFailure() {
                      px-4 py-8
                      text-center"
         >
-          <XCircle
+          <Loader2
             className="w-20 h-20
-                       text-red-400
+                       text-white
+                       animate-spin
                        mb-6"
           />
           <h1
@@ -61,35 +77,16 @@ export default function ConfirmUserFailure() {
                        text-white
                        mb-4"
           >
-            Error de Confirmación
+            Procesando Confirmación
           </h1>
           <p
             className="text-xl
                        text-white
                        mb-8"
           >
-            Lo sentimos, ha ocurrido un error al confirmar tu cuenta. Por favor,
-            vuelve a la página de registro e intenta nuevamente.
+            Estamos verificando tu cuenta. Por favor, espera un momento mientras
+            procesamos tu solicitud.
           </p>
-          <button
-            onClick={handleVolverRegistro}
-            className="flex
-                       items-center
-                       justify-center
-                       px-6 py-3
-                       bg-white
-                       text-purple-600
-                       font-semibold
-                       rounded-md
-                       shadow-md
-                       hover:bg-purple-100
-                       transition
-                       duration-300
-                       ease-in-out"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Volver al Registro
-          </button>
         </div>
       </div>
     </div>
