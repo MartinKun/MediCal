@@ -12,7 +12,7 @@ export default function ConfirmUser({ params }: { params: { token: string } }) {
     const confirmUser = async () => {
       if (params.token) {
         try {
-          const response = await services.confirmUser(params.token);
+          const response = await services.confirmUser({ token: params.token });
 
           if (response) {
             router.push("/confirm-user/success");

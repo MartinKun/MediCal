@@ -16,4 +16,7 @@ export interface ServiceI {
     email: string;
     password: string;
   };
+  confirmUser: {
+    token: string;
+  };
 }
