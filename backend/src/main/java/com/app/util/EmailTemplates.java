@@ -2,7 +2,7 @@ package com.app.util;
 
 public class EmailTemplates {
 
-    private static final String CONFIRM_USER_URL = "http://localhost:3000/confirmUser/";
+    private static final String CONFIRM_USER_URL = "http://localhost:3000/confirm-user/";
 
     public static String getConfirmationEmailTemplate(String token, String userName) {
         StringBuilder builder = new StringBuilder();
