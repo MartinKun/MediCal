@@ -9,11 +9,11 @@ const api = axios.create({
   withCredentials: true,
 });
 
-const signup = async (body: ServiceI["registerUser"]) =>
-  api.post("/auth/signup", body);
+const register = async (body: ServiceI["registerUser"]) =>
+  api.post("/auth/register", body);
 
 const confirmUser = async (token: string) =>
-  api.put("/auth/confirmUser", null, {
+  api.put("/auth/confirm", null, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -23,7 +23,7 @@ const login = async (body: ServiceI["loginUser"]) =>
   api.post("/auth/login", body);
 
 const services = {
-  signup,
+  register,
   confirmUser,
   login,
 };

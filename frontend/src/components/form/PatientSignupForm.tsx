@@ -40,7 +40,7 @@ export const PatientSignupForm = () => {
 
     try {
       showLoader();
-      const response = await services.signup(newPatient);
+      const response = await services.register(newPatient);
       if (response) {
         router.push("/signup/success");
       } else {
