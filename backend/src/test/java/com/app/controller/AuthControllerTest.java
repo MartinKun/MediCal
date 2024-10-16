@@ -288,20 +288,22 @@ public class AuthControllerTest {
                 .email("johndoe@mail.com")
                 .build();
 
-        String newPassword = "newPassword123";
+        String token = "resetToken123";
 
-        when(authServiceImpl.recoveryPassword(any(ForgotPassRequest.class))).thenReturn(newPassword);
-        doNothing().when(emailServiceImpl).sendRecoveryPassEmail(anyString(), anyString());
+        when(authServiceImpl.emailExists(anyString())).thenReturn(true);
+        when(authServiceImpl.generatePasswordResetToken(anyString())).thenReturn(token);
+        doNothing().when(emailServiceImpl).sendResetPassEmail(anyString(), anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/forgot-password")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .with(csrf()))
                 .andExpect(status().isOk())
-                .andExpect(content().string("An email was sent with a new password."));
+                .andExpect(content().string("If the email exists, a password reset email has been sent."));
 
-        verify(authServiceImpl).recoveryPassword(any(ForgotPassRequest.class));
-        verify(emailServiceImpl).sendRecoveryPassEmail(anyString(), anyString());
+        verify(authServiceImpl).emailExists(anyString());
+        verify(authServiceImpl).generatePasswordResetToken(anyString());
+        verify(emailServiceImpl).sendResetPassEmail(anyString(), anyString());
     }
 
 }

@@ -3,7 +3,6 @@ package com.app.service;
 import com.app.common.enums.TokenType;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
-import com.app.controller.dto.request.ForgotPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
@@ -233,30 +232,96 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test: Recover Password Successfully")
+    @DisplayName("Test 5: Confirm User Successfully")
     @Order(5)
-    public void testRecoveryPassword() {
+    public void confirmUserTest() {
         // Arrange
-        ForgotPassRequest request = ForgotPassRequest.builder()
-                .email("johndoe@mail.com")
+        String token = "confirmToken";
+        String email = "johndoe@mail.com";
+
+        DecodedJWT decodedJWT = Mockito.mock(DecodedJWT.class);
+        User user = Patient.builder()
+                .address("Mitre 123")
                 .build();
+        user.setEmail(email);
+        user.setEnabled(false);
 
-        User user = new Patient();
-        user.setEmail(request.getEmail());
-        user.setPassword("oldEncodedPassword123");
-        user.setEnabled(true);
-
-        String newPassword = user.getPassword().substring(0, 8);
-
-        Mockito.when(userRepository.findUserByEmail(request.getEmail())).thenReturn(Optional.of(user));
-        Mockito.when(passwordEncoder.encode(any(String.class))).thenReturn("newEncodedPassword");
+        Mockito.when(jwtUtils.validateToken(token, TokenType.CONFIRM)).thenReturn(decodedJWT);
+        Mockito.when(jwtUtils.extractUsername(decodedJWT)).thenReturn(email);
+        Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(user));
+        Mockito.when(userRepository.save(user)).thenReturn(user);
 
         // Act
-        String result = authServiceImpl.recoveryPassword(request);
+        UserRegistrationResponse response = authServiceImpl.confirmUser(token);
 
         // Assert
-        assertEquals(newPassword, result);  // Verifica que se generó correctamente la nueva contraseña
-        Mockito.verify(userRepository).save(user);  // Verifica que el usuario se guardó
-        Mockito.verify(passwordEncoder).encode(newPassword);  // Verifica que la nueva contraseña fue encriptada
+        assertNotNull(response);
+        assertTrue(user.isEnabled());
+        Mockito.verify(jwtUtils).validateToken(token, TokenType.CONFIRM);
+        Mockito.verify(jwtUtils).extractUsername(decodedJWT);
+        Mockito.verify(userRepository).findUserByEmail(email);
+        Mockito.verify(userRepository).save(user);
     }
+
+    @Test
+    @DisplayName("Test 6: Generate Confirm Token Successfully")
+    @Order(6)
+    public void generateConfirmTokenTest() {
+        // Arrange
+        String email = "johndoe@mail.com";
+        String token = "generatedConfirmToken";
+
+        Mockito.when(jwtUtils.createConfirmToken(email)).thenReturn(token);
+
+        // Act
+        String result = authServiceImpl.generateConfirmToken(email);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(token, result);
+        Mockito.verify(jwtUtils).createConfirmToken(email);
+    }
+
+    @Test
+    @DisplayName("Test 7: Generate Password Reset Token Successfully")
+    @Order(7)
+    public void generatePasswordResetTokenTest() {
+        // Arrange
+        String email = "johndoe@mail.com";
+        String token = "generatedResetToken";
+
+        Mockito.when(jwtUtils.createResetPasswordToken(email)).thenReturn(token);
+
+        // Act
+        String result = authServiceImpl.generatePasswordResetToken(email);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(token, result);
+        Mockito.verify(jwtUtils).createResetPasswordToken(email);
+    }
+
+    @Test
+    @DisplayName("Test 8: Check if Email Exists")
+    @Order(8)
+    public void emailExistsTest() {
+        // Arrange
+        String email = "johndoe@mail.com";
+
+        User user = Patient.builder()
+                .address("Mitre 123")
+                .build();
+        user.setEmail(email);
+        user.setEnabled(false);
+
+        Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(user));
+
+        // Act
+        boolean result = authServiceImpl.emailExists(email);
+
+        // Assert
+        assertTrue(result);
+        Mockito.verify(userRepository).findUserByEmail(email);
+    }
+
 }
