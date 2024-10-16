@@ -7,7 +7,7 @@ public interface EmailService {
 
     void sendEmail(EmailDTO emailDTO);
 
-    void sendConfirmUserEmail(UserRegistrationResponse userRegistrationResponse);
+    void sendConfirmUserEmail(String name, String email, String token);
 
-    void sendRecoveryPassEmail(String email, String newPassword);
+    void sendResetPassEmail(String email, String token);
 }

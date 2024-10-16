@@ -3,7 +3,7 @@ package com.app.service;
 import com.app.common.enums.TokenType;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
-import com.app.controller.dto.request.RecoveryPassRequest;
+import com.app.controller.dto.request.ForgotPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
@@ -130,7 +130,7 @@ public class AuthServiceImplTest {
         Mockito.when(userRepository.save(any(Patient.class))).thenReturn(savedPatient);
 
         // Act
-        PatientRegistrationResponse response = (PatientRegistrationResponse) authServiceImpl.signup(patientRequest);
+        PatientRegistrationResponse response = (PatientRegistrationResponse) authServiceImpl.register(patientRequest);
 
         // Assert
         assertEquals("John", response.getFirstName());
@@ -164,7 +164,7 @@ public class AuthServiceImplTest {
         Mockito.when(userRepository.save(any(Doctor.class))).thenReturn(savedDoctor);
 
         // Act
-        DoctorRegistrationResponse response = (DoctorRegistrationResponse) authServiceImpl.signup(doctorRequest);
+        DoctorRegistrationResponse response = (DoctorRegistrationResponse) authServiceImpl.register(doctorRequest);
 
         // Assert
         assertEquals("Dr. Smith", response.getFirstName());
@@ -237,7 +237,7 @@ public class AuthServiceImplTest {
     @Order(5)
     public void testRecoveryPassword() {
         // Arrange
-        RecoveryPassRequest request = RecoveryPassRequest.builder()
+        ForgotPassRequest request = ForgotPassRequest.builder()
                 .email("johndoe@mail.com")
                 .build();
 

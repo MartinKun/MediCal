@@ -3,7 +3,7 @@ package com.app.controller;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.ConfirmUserRequest;
 import com.app.controller.dto.request.LoginRequest;
-import com.app.controller.dto.request.RecoveryPassRequest;
+import com.app.controller.dto.request.ForgotPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
@@ -108,7 +108,7 @@ public class AuthControllerTest {
         patientResponse.setPhone("123456");
         patientResponse.setRole(RoleEnum.PATIENT);
 
-        when(authServiceImpl.signup(any(RegisterUserRequest.class))).thenReturn(patientResponse);
+        when(authServiceImpl.register(any(RegisterUserRequest.class))).thenReturn(patientResponse);
 
         this.mockMvc
                 .perform(
@@ -128,7 +128,7 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.role").value("PATIENT"))
                 .andExpect(jsonPath("$.enabled").value(false));
 
-        verify(authServiceImpl).signup(any(RegisterUserRequest.class));
+        verify(authServiceImpl).register(any(RegisterUserRequest.class));
     }
 
     @Test
@@ -149,7 +149,7 @@ public class AuthControllerTest {
         doctorResponse.setPhone("123456");
         doctorResponse.setRole(RoleEnum.DOCTOR);
 
-        when(authServiceImpl.signup(any(RegisterUserRequest.class))).thenReturn(doctorResponse);
+        when(authServiceImpl.register(any(RegisterUserRequest.class))).thenReturn(doctorResponse);
 
         this.mockMvc
                 .perform(
@@ -171,7 +171,7 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.role").value("DOCTOR"))
                 .andExpect(jsonPath("$.enabled").value(false));
 
-        verify(authServiceImpl).signup(any(RegisterUserRequest.class));
+        verify(authServiceImpl).register(any(RegisterUserRequest.class));
     }
 
     @Test
@@ -180,7 +180,7 @@ public class AuthControllerTest {
     public void testRegisterPatientMissingFields() throws Exception {
         patientRequest.setAddress(null);
 
-        when(authServiceImpl.signup(any(RegisterUserRequest.class)))
+        when(authServiceImpl.register(any(RegisterUserRequest.class)))
                 .thenThrow(new IncompleteFieldsException("Incomplete fields for Patient"));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
@@ -197,7 +197,7 @@ public class AuthControllerTest {
     public void testRegisterDoctorMissingFields() throws Exception {
         doctorRequest.setOfficeAddress(null);
 
-        when(authServiceImpl.signup(any(RegisterUserRequest.class)))
+        when(authServiceImpl.register(any(RegisterUserRequest.class)))
                 .thenThrow(new IncompleteFieldsException("Incomplete fields for Doctor"));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
@@ -284,13 +284,13 @@ public class AuthControllerTest {
     @Order(7)
     @DisplayName("Test 7: Forgot Password Successfully")
     public void testForgotPassword() throws Exception {
-        RecoveryPassRequest request = RecoveryPassRequest.builder()
+        ForgotPassRequest request = ForgotPassRequest.builder()
                 .email("johndoe@mail.com")
                 .build();
 
         String newPassword = "newPassword123";
 
-        when(authServiceImpl.recoveryPassword(any(RecoveryPassRequest.class))).thenReturn(newPassword);
+        when(authServiceImpl.recoveryPassword(any(ForgotPassRequest.class))).thenReturn(newPassword);
         doNothing().when(emailServiceImpl).sendRecoveryPassEmail(anyString(), anyString());
 
         mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/forgot-password")
@@ -300,7 +300,7 @@ public class AuthControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().string("An email was sent with a new password."));
 
-        verify(authServiceImpl).recoveryPassword(any(RecoveryPassRequest.class));
+        verify(authServiceImpl).recoveryPassword(any(ForgotPassRequest.class));
         verify(emailServiceImpl).sendRecoveryPassEmail(anyString(), anyString());
     }
 

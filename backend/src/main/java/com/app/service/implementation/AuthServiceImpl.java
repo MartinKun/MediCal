@@ -3,7 +3,6 @@ package com.app.service.implementation;
 import com.app.common.enums.TokenType;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
-import com.app.controller.dto.request.RecoveryPassRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
@@ -39,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
     private AuthenticationManager authenticationManager;
 
     @Override
-    public UserRegistrationResponse signup(RegisterUserRequest request) {
+    public UserRegistrationResponse register(RegisterUserRequest request) {
 
         User user = createUserEntity(request);
 
@@ -85,18 +84,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String recoveryPassword(RecoveryPassRequest request) {
+    public String generateConfirmToken(String email) {
+        return jwtUtils.createConfirmToken(email);
+    }
 
-        User user = userRepository.findUserByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User does not exist"));
-        if(!user.isEnabled()) throw new RuntimeException("User is disabled");
+    @Override
+    public String generatePasswordResetToken(String email) {
+        return jwtUtils.createResetPasswordToken(email);
+    }
 
-        String newPassword = user.getPassword().substring(0, 8);
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-
-        return newPassword;
+    @Override
+    public boolean emailExists(String email) {
+        return userRepository.findUserByEmail(email).isPresent();
     }
 
 

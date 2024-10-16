@@ -3,6 +3,7 @@ package com.app.common.util;
 public class EmailTemplates {
 
     private static final String CONFIRM_USER_URL = "http://localhost:3000/confirm-user/";
+    private static final String RESET_PASSWORD_URL = "http://localhost:3000/reset-password/";
 
     public static String getConfirmationEmailTemplate(String token, String userName) {
         StringBuilder builder = new StringBuilder();
@@ -60,7 +61,7 @@ public class EmailTemplates {
         return builder.toString();
     }
 
-    public static String getRecoveryPassEmailTemplate(String newPassword) {
+    public static String getResetPasswordEmail(String token) {
         StringBuilder builder = new StringBuilder();
 
         builder
@@ -85,9 +86,11 @@ public class EmailTemplates {
                 .append("<td style=\"padding: 30px;\">")
                 .append("<h2 style=\"color: #8B5CF6; font-size: 24px; margin-bottom: 20px; text-align: center;\">Recupera tu contraseña en MediCal</h2>")
                 .append("<p style=\"margin-bottom: 20px; line-height: 1.5;\">Estimado/a usuario/a,</p>")
-                .append("<p style=\"margin-bottom: 20px; line-height: 1.5;\">Hemos recibido una solicitud para restablecer tu contraseña. A continuación, te proporcionamos tu nueva contraseña:</p>")
-                .append("<p style=\"margin-bottom: 20px; font-weight: bold; font-size: 18px; color: #8B5CF6; text-align: center;\">").append(newPassword).append("</p>")
-                .append("<p style=\"margin-bottom: 20px; line-height: 1.5;\">Una vez que inicies sesión, podrás cambiar esta contraseña en la sección Mi Perfil.</p>")
+                .append("<p style=\"margin-bottom: 20px; line-height: 1.5;\">Hemos recibido una solicitud para restablecer tu contraseña. Haz clic en el siguiente enlace para ingresar una nueva contraseña:</p>")
+                .append("<p style=\"text-align: center; margin-bottom: 20px;\">")
+                .append("<a href=\"").append(RESET_PASSWORD_URL).append(token).append("\" ")
+                .append("style=\"background-color: #8B5CF6; color: white; text-decoration: none; padding: 10px 20px; border-radius: 4px; display: inline-block; font-size: 16px;\">Restablecer contraseña</a>")
+                .append("</p>")
                 .append("<p style=\"margin-bottom: 20px; line-height: 1.5;\">Si no has solicitado un restablecimiento de contraseña, por favor ignora este mensaje.</p>")
                 .append("<p style=\"line-height: 1.5;\">Saludos cordiales,<br>El equipo de MediCal</p>")
                 .append("</td>")

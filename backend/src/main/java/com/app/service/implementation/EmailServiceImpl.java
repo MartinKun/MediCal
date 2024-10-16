@@ -1,12 +1,9 @@
 package com.app.service.implementation;
 
 import com.app.controller.dto.EmailDTO;
-import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.service.EmailService;
 import com.app.common.util.EmailTemplates;
-import com.app.common.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +27,6 @@ public class EmailServiceImpl implements EmailService {
     private String HOST;
 
     private final String FROM_NAME = "Martín";
-
-    @Autowired
-    private JwtUtils jwtUtils;
 
     @Override
     public void sendEmail(EmailDTO emailDTO) {
@@ -81,24 +75,22 @@ public class EmailServiceImpl implements EmailService {
     }
 
     @Override
-    public void sendConfirmUserEmail(UserRegistrationResponse userRegistrationResponse) {
-        String token = jwtUtils.createConfirmToken(userRegistrationResponse.getEmail());
+    public void sendConfirmUserEmail(String name, String email, String token) {
 
         EmailDTO emailDTO = EmailDTO.builder()
-                .recipient(userRegistrationResponse.getEmail())
+                .recipient(email)
                 .subject("Confirmación de registro en nuestro sitio web")
-                .body(EmailTemplates.getConfirmationEmailTemplate(token, userRegistrationResponse.getFirstName()))
+                .body(EmailTemplates.getConfirmationEmailTemplate(token, name))
                 .build();
         this.sendEmail(emailDTO);
     }
 
     @Override
-    public void sendRecoveryPassEmail(String email, String newPassword) {
-
+    public void sendResetPassEmail(String email, String token) {
         EmailDTO emailDTO = EmailDTO.builder()
                 .recipient(email)
                 .subject("Recuperación de contraseña en Medical")
-                .body(EmailTemplates.getRecoveryPassEmailTemplate(newPassword))
+                .body(EmailTemplates.getResetPasswordEmail(token))
                 .build();
         this.sendEmail(emailDTO);
     }
