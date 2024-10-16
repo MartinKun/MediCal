@@ -1,6 +1,7 @@
 package com.app.config.security.filter;
 
-import com.app.util.JwtUtils;
+import com.app.common.enums.TokenType;
+import com.app.common.util.JwtUtils;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
 
-        DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken);
+        DecodedJWT decodedJWT = jwtUtils.validateToken(jwtToken, TokenType.ACCESS);
 
         String username = jwtUtils.extractUsername(decodedJWT);
 

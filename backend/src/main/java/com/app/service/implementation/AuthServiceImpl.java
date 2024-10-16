@@ -1,5 +1,6 @@
 package com.app.service.implementation;
 
+import com.app.common.enums.TokenType;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RecoveryPassRequest;
@@ -13,7 +14,7 @@ import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
 import com.app.persistence.repository.UserRepository;
 import com.app.service.AuthService;
-import com.app.util.JwtUtils;
+import com.app.common.util.JwtUtils;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -71,7 +72,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserRegistrationResponse confirmUser(String token) {
 
-        DecodedJWT decodedJWT = jwtUtils.validateToken(token);
+        DecodedJWT decodedJWT = jwtUtils.validateToken(token, TokenType.CONFIRM);
         String username = jwtUtils.extractUsername(decodedJWT);
 
         User user = userRepository.findUserByEmail(username)

@@ -1,5 +1,6 @@
 package com.app.service;
 
+import com.app.common.enums.TokenType;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RecoveryPassRequest;
@@ -13,7 +14,7 @@ import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
 import com.app.persistence.repository.UserRepository;
 import com.app.service.implementation.AuthServiceImpl;
-import com.app.util.JwtUtils;
+import com.app.common.util.JwtUtils;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -186,7 +187,7 @@ public class AuthServiceImplTest {
         String email = "johndoe@mail.com";
 
 
-        Mockito.when(jwtUtils.validateToken(token)).thenReturn(decodedJWT);
+        Mockito.when(jwtUtils.validateToken(token, TokenType.CONFIRM)).thenReturn(decodedJWT);
         Mockito.when(jwtUtils.extractUsername(decodedJWT)).thenReturn(email);
 
         Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(user));

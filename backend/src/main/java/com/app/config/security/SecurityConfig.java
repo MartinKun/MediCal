@@ -2,7 +2,7 @@ package com.app.config.security;
 
 import com.app.config.security.filter.JwtAuthenticationFilter;
 import com.app.service.implementation.UserDetailServiceImpl;
-import com.app.util.JwtUtils;
+import com.app.common.util.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.app.util;
+package com.app.common.util;
 
 public class EmailTemplates {
 
