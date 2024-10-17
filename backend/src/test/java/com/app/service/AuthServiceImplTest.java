@@ -4,6 +4,7 @@ import com.app.common.enums.TokenType;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
+import com.app.controller.dto.request.ResetPassRequest;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
@@ -322,6 +323,44 @@ public class AuthServiceImplTest {
         // Assert
         assertTrue(result);
         Mockito.verify(userRepository).findUserByEmail(email);
+    }
+
+    @Test
+    @DisplayName("Test 9: Reset Password Successfully")
+    @Order(9)
+    public void resetPasswordTest() {
+        // Arrange
+        String token = "resetToken123";
+        String newPassword = "newSecurePassword";
+        String email = "johndoe@mail.com";
+
+        ResetPassRequest request = ResetPassRequest.builder()
+                .token(token)
+                .newPassword(newPassword)
+                .build();
+
+        DecodedJWT decodedJWT = Mockito.mock(DecodedJWT.class);
+
+        User user = Patient.builder()
+                .address("Mitre 123")
+                .build();
+        user.setEmail(email);
+        user.setPassword("oldPasswordHashed");
+
+        // Mocking behavior
+        Mockito.when(jwtUtils.validateToken(token, TokenType.RESET)).thenReturn(decodedJWT);
+        Mockito.when(jwtUtils.extractUsername(decodedJWT)).thenReturn(email);
+        Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(user));
+        Mockito.when(passwordEncoder.encode(newPassword)).thenReturn("newPasswordHashed");
+
+        // Act
+        authServiceImpl.resetPassword(request);
+
+        // Assert
+        assertEquals("newPasswordHashed", user.getPassword());
+        Mockito.verify(userRepository).findUserByEmail(email);
+        Mockito.verify(passwordEncoder).encode(newPassword);
+        Mockito.verify(userRepository).save(user);
     }
 
 }

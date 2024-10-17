@@ -1,10 +1,7 @@
 package com.app.controller;
 
 import com.app.controller.dto.enums.RoleEnum;
-import com.app.controller.dto.request.ConfirmUserRequest;
-import com.app.controller.dto.request.LoginRequest;
-import com.app.controller.dto.request.ForgotPassRequest;
-import com.app.controller.dto.request.RegisterUserRequest;
+import com.app.controller.dto.request.*;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
@@ -304,6 +301,27 @@ public class AuthControllerTest {
         verify(authServiceImpl).emailExists(anyString());
         verify(authServiceImpl).generatePasswordResetToken(anyString());
         verify(emailServiceImpl).sendResetPassEmail(anyString(), anyString());
+    }
+
+    @Test
+    @Order(8)
+    @DisplayName("Test 8: Reset Password Successfully")
+    public void testResetPassword() throws Exception {
+        ResetPassRequest request = ResetPassRequest.builder()
+                .token("resetToken123")
+                .newPassword("newSecurePassword")
+                .build();
+
+        doNothing().when(authServiceImpl).resetPassword(any(ResetPassRequest.class));
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Password reset successfully"));
+
+        verify(authServiceImpl).resetPassword(any(ResetPassRequest.class));
     }
 
 }
