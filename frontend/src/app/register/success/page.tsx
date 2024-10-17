@@ -3,7 +3,7 @@ import { Card } from "@/components";
 import { ArrowLeftIcon, CheckCircleIcon } from "lucide-react";
 import Link from "next/link";
 
-export default function SuccessSignup() {
+export default function RegisterSuccess() {
   return (
     <section
       className="max-w-2xl

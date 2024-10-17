@@ -2,7 +2,7 @@
 import { Card, ForgotPasswordForm } from "@/components";
 import Link from "next/link";
 
-export default function RecoveryPassword() {
+export default function ForgotPassword() {
   return (
     <section
       className="max-w-xl

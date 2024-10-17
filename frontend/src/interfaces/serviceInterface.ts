@@ -19,4 +19,7 @@ export interface ServiceI {
   confirmUser: {
     token: string;
   };
+  recoverPass: {
+    email: string;
+  };
 }

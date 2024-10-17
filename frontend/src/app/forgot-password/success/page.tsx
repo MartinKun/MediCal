@@ -1,10 +1,8 @@
 "use client";
-
-import { ArrowLeft, XCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 import Link from "next/link";
-import React from "react";
 
-export default function ConfirmUserFailure() {
+export default function ForgotPasswordSuccess() {
   return (
     <div
       className="fixed
@@ -44,9 +42,9 @@ export default function ConfirmUserFailure() {
                      px-4 py-8
                      text-center"
         >
-          <XCircle
+          <CheckCircle
             className="w-20 h-20
-                       text-red-400
+                       text-green-400
                        mb-6"
           />
           <h1
@@ -55,18 +53,27 @@ export default function ConfirmUserFailure() {
                        text-white
                        mb-4"
           >
-            Error de Confirmación
+            Instrucciones Enviadas
           </h1>
           <p
             className="text-xl
                        text-white
                        mb-8"
           >
-            Lo sentimos, ha ocurrido un error al confirmar tu cuenta. Por favor,
-            vuelve a la página de registro e intenta nuevamente.
+            Hemos enviado las instrucciones para recuperar tu contraseña a tu
+            dirección de correo electrónico. Por favor, revisa tu bandeja de
+            entrada y sigue los pasos indicados.
+          </p>
+          <p
+            className="text-md
+                       text-white
+                       mb-8"
+          >
+            Si no recibes el correo en unos minutos, revisa tu carpeta de spam o
+            correo no deseado.
           </p>
           <Link
-            href={"/register"}
+            href={"/login"}
             className="flex
                        items-center
                        justify-center
@@ -82,7 +89,7 @@ export default function ConfirmUserFailure() {
                        ease-in-out"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
-            Volver al Registro
+            Volver al Inicio de Sesión
           </Link>
         </div>
       </div>

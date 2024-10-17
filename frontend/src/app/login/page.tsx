@@ -15,7 +15,7 @@ export default function Login() {
         <LoginForm />
         <div className="mt-4 text-center">
           <Link
-            href="/recoveryPassword"
+            href="/forgot-password"
             className="text-white
                        hover:underline
                        text-sm"

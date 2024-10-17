@@ -1,16 +1,10 @@
 "use client";
 
 import { ArrowLeft, XCircle } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import React from "react";
 
 export default function SignupFailure() {
-  const router = useRouter();
-
-  const handleVolverRegistro = () => {
-    router.push("/register");
-  };
-
   return (
     <div
       className="fixed
@@ -71,8 +65,8 @@ export default function SignupFailure() {
             Lo sentimos, ha ocurrido un error al registrar el usuario. Por
             favor, vuelve a la página de registro e intenta nuevamente.
           </p>
-          <button
-            onClick={handleVolverRegistro}
+          <Link
+            href={"/register"}
             className="flex
                        items-center
                        justify-center
@@ -89,7 +83,7 @@ export default function SignupFailure() {
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Volver al Registro
-          </button>
+          </Link>
         </div>
       </div>
     </div>
