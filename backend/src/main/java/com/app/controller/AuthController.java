@@ -1,9 +1,6 @@
 package com.app.controller;
 
-import com.app.controller.dto.request.ConfirmUserRequest;
-import com.app.controller.dto.request.LoginRequest;
-import com.app.controller.dto.request.ForgotPassRequest;
-import com.app.controller.dto.request.RegisterUserRequest;
+import com.app.controller.dto.request.*;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
@@ -92,6 +89,16 @@ public class AuthController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body("If the email exists, a password reset email has been sent.");
+    }
+
+    @PutMapping("/reset-password")
+    public ResponseEntity<String> resetPassword(
+            @RequestBody ResetPassRequest request
+            ){
+        authService.resetPassword(request);
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body("Password reset successfully");
     }
 
 }

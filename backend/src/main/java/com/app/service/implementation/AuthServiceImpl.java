@@ -4,6 +4,7 @@ import com.app.common.enums.TokenType;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
+import com.app.controller.dto.request.ResetPassRequest;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
@@ -96,6 +97,21 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public boolean emailExists(String email) {
         return userRepository.findUserByEmail(email).isPresent();
+    }
+
+    @Override
+    public void resetPassword(ResetPassRequest request) {
+        String token = request.getToken();
+        String newPassword = request.getNewPassword();
+
+        DecodedJWT decodedJWT = jwtUtils.validateToken(token, TokenType.RESET);
+        String username = jwtUtils.extractUsername(decodedJWT);
+
+        User user = userRepository.findUserByEmail(username)
+                .orElseThrow(() -> new RuntimeException("User does not exist"));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
 

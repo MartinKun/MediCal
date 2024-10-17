@@ -2,6 +2,7 @@ package com.app.service;
 
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
+import com.app.controller.dto.request.ResetPassRequest;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
 
@@ -17,4 +18,6 @@ public interface AuthService {
     String generatePasswordResetToken(String email);
 
     boolean emailExists(String email);
+
+    void resetPassword(ResetPassRequest request);
 }
