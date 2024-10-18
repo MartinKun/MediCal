@@ -21,11 +21,15 @@ const login = async (body: ServiceI["loginUser"]) =>
 const recoverPass = async (body: ServiceI["recoverPass"]) =>
   api.put("/auth/forgot-password", body);
 
+const resetPass = async (body: ServiceI["resetPass"]) =>
+  api.put("/auth/reset-password", body);
+
 const services = {
   register,
   confirmUser,
   login,
   recoverPass,
+  resetPass,
 };
 
 export default services;

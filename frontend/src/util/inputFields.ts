@@ -120,3 +120,20 @@ export const signupInputFields = [
     icon: PhoneIcon,
   },
 ];
+
+export const resetPassInputFields = [
+  {
+    name: "password",
+    label: "Nueva Contraseña",
+    type: "password",
+    placeholder: "••••••••",
+    icon: LockIcon,
+  },
+  {
+    name: "confirmPassword",
+    label: "Confirmar Contraseña",
+    type: "password",
+    placeholder: "••••••••",
+    icon: LockIcon,
+  },
+];

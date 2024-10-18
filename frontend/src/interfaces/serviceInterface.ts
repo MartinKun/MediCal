@@ -22,4 +22,8 @@ export interface ServiceI {
   recoverPass: {
     email: string;
   };
+  resetPass: {
+    newPassword: string;
+    token: string;
+  };
 }
