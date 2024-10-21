@@ -1,3 +1,6 @@
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { useState } from "react";
+
 type Props = {
   name: string;
   label: string;
@@ -17,6 +20,8 @@ export const InputWithIcon = ({
   handleChange,
   value,
 }: Props) => {
+  const [showPass, setShowPass] = useState(false);
+
   return (
     <div className="space-y-2">
       <label
@@ -32,10 +37,10 @@ export const InputWithIcon = ({
         <input
           id={name}
           name={name}
-          type={type}
+          type={type === "password" && showPass ? "text" : type}
           placeholder={placeholder}
-          className="w-full
-                     pl-10 pr-3
+          className={`w-full
+                     pl-10 ${type === "password" ? "pr-10" : "pr-3"}
                      py-2 rounded-md
                      bg-white
                      bg-opacity-50
@@ -47,7 +52,7 @@ export const InputWithIcon = ({
                      focus:outline-none
                      focus:ring-2
                      focus:ring-purple-600
-                     focus:border-transparent"
+                     focus:border-transparent`}
           required
           value={value}
           onChange={handleChange}
@@ -64,6 +69,18 @@ export const InputWithIcon = ({
         >
           <Icon />
         </span>
+        {type === "password" && (
+          <button
+            className="absolute
+                       text-gray-500
+                       right-3
+                       top-2"
+            type="button"
+            onClick={() => setShowPass(!showPass)}
+          >
+            {showPass ? <EyeIcon /> : <EyeOffIcon />}
+          </button>
+        )}
       </div>
     </div>
   );
