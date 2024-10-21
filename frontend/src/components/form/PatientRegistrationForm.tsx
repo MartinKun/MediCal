@@ -49,8 +49,6 @@ export const PatientRegistrationForm = () => {
     } catch (error) {
       router.push("/register/failure");
       console.error("Registration failed:", error);
-    } finally {
-      hideLoader();
     }
   };
 

@@ -39,8 +39,6 @@ export const ResetPasswordForm = ({ token }: Props) => {
     } catch (error) {
       console.error("Reset password failed:", error);
       router.push(`/reset-password/failure/${token}`);
-    } finally {
-      hideLoader();
     }
   };
 

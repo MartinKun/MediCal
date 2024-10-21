@@ -1,8 +1,11 @@
+"use client";
+
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./common/Header";
 import { Loader } from "@/components";
 import { metadata } from "./config";
+import { useRouteChangeLoader } from "@/hook/useRouterChangeLoader";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -20,6 +23,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  useRouteChangeLoader();
   return (
     <html lang="en">
       <head>

@@ -22,7 +22,6 @@ export const ForgotPasswordForm = () => {
       if (response) router.push("/forgot-password/success");
     } catch (error) {
       console.error("Recover password failed:", error);
-    } finally {
       hideLoader();
     }
   };

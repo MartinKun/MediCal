@@ -10,7 +10,6 @@ import { useBoundStore } from "@/store/store";
 
 export const DoctorRegistrationForm = () => {
   const showLoader = useBoundStore((state) => state.showLoader);
-  const hideLoader = useBoundStore((state) => state.hideLoader);
   const { formState, setFormState } = useFormState({
     firstName: "",
     lastName: "",
@@ -53,8 +52,6 @@ export const DoctorRegistrationForm = () => {
     } catch (error) {
       router.push("/register/failure");
       console.error("Registration failed:", error);
-    } finally {
-      hideLoader();
     }
   };
 
