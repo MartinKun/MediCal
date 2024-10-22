@@ -7,6 +7,7 @@ import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.app.service.implementation.EmailServiceImpl;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserRegistrationResponse> register(
-            @RequestBody RegisterUserRequest request
+            @Valid @RequestBody RegisterUserRequest request
     ) {
         validateUserTypeFields(request);
 
@@ -58,7 +59,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(
-            @RequestBody LoginRequest request
+            @Valid @RequestBody LoginRequest request
     ){
         LoginResponse response = authService.login(request);
         return ResponseEntity.status(HttpStatus.OK).body(response);
@@ -78,7 +79,7 @@ public class AuthController {
 
     @PutMapping("/forgot-password")
     public ResponseEntity<String> forgotPassword(
-            @RequestBody ForgotPassRequest request
+            @Valid @RequestBody ForgotPassRequest request
             ){
         String email = request.getEmail();
 

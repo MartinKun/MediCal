@@ -1,5 +1,6 @@
 package com.app.persistence.entity;
 
+import com.app.controller.dto.enums.GenderEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +25,7 @@ public abstract class User implements UserDetails {
     private String firstName;
     private String lastName;
     private LocalDate birthDate;
-    private String gender;
+    private GenderEnum gender;
     private String phone;
     private String email;
     private String password;

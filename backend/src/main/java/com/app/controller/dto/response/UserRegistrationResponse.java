@@ -1,5 +1,6 @@
 package com.app.controller.dto.response;
 
+import com.app.controller.dto.enums.GenderEnum;
 import com.app.controller.dto.enums.RoleEnum;
 import lombok.*;
 
@@ -16,7 +17,7 @@ public abstract class UserRegistrationResponse {
     private String email;
     private String password;
     private LocalDate birthDate;
-    private String gender;
+    private GenderEnum gender;
     private String phone;
     private RoleEnum role;
     private boolean isEnabled;

@@ -1,10 +1,9 @@
 package com.app.controller.dto.request;
 
+import com.app.controller.dto.enums.GenderEnum;
 import com.app.controller.dto.enums.RoleEnum;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import com.app.validation.ValidUserRequest;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -14,6 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ValidUserRequest
 public class RegisterUserRequest {
 
     @NotBlank(message = "First name is required")
@@ -28,18 +28,22 @@ public class RegisterUserRequest {
 
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password should have at least 8 characters")
+    @Pattern(
+            regexp = "^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@$!%*?&#]).{8,}$",
+            message = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character"
+    )
     private String password;
 
     @NotNull(message = "Birth date is required")
     private LocalDate birthDate;
 
-    @NotBlank(message = "Gender is required")
-    private String gender;
+    @NotNull(message = "Gender is required")
+    private GenderEnum gender;
 
     @NotBlank(message = "Phone is required")
     private String phone;
 
-    @NotBlank(message = "Role is required")
+    @NotNull(message = "Role is required")
     private RoleEnum role;
 
     // Specific to Patient
