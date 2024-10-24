@@ -1,10 +1,8 @@
 package com.app.controller;
 
 import com.app.controller.dto.request.*;
-import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
-import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.app.service.implementation.EmailServiceImpl;
 import jakarta.validation.Valid;
@@ -27,7 +25,6 @@ public class AuthController {
     public ResponseEntity<UserRegistrationResponse> register(
             @Valid @RequestBody RegisterUserRequest request
     ) {
-        validateUserTypeFields(request);
 
         UserRegistrationResponse response = authService.register(request);
 
@@ -39,22 +36,6 @@ public class AuthController {
                 token);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
-    }
-
-    private void validateUserTypeFields(RegisterUserRequest request) {
-        if (request.getRole() == RoleEnum.DOCTOR) {
-            if (request.getOfficeAddress() == null &&
-                    request.getSpeciality() == null &&
-                    request.getLicense() == null) {
-                throw new IncompleteFieldsException("Incomplete fields for Doctor");
-            }
-        }
-
-        if (request.getRole() == RoleEnum.PATIENT) {
-            if (request.getAddress() == null) {
-                throw new IncompleteFieldsException("Incomplete fields for Patient");
-            }
-        }
     }
 
     @PostMapping("/login")
