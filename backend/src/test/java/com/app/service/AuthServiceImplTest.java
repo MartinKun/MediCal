@@ -1,6 +1,7 @@
 package com.app.service;
 
 import com.app.common.enums.TokenType;
+import com.app.controller.dto.enums.GenderEnum;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
@@ -67,9 +68,9 @@ public class AuthServiceImplTest {
                 .firstName("John")
                 .lastName("Doe")
                 .email("johndoe@mail.com")
-                .password("1234567")
+                .password("MyPassw@rd123")
                 .birthDate(LocalDate.of(1990, 1, 1))
-                .gender("male")
+                .gender(GenderEnum.MALE)
                 .phone("123456789")
                 .role(RoleEnum.PATIENT)
                 .address("Mitre 123")
@@ -79,9 +80,9 @@ public class AuthServiceImplTest {
                 .firstName("Dr. Smith")
                 .lastName("Johnson")
                 .email("drsmith@mail.com")
-                .password("password")
+                .password("MyPassw@rd123")
                 .birthDate(LocalDate.of(1980, 2, 2))
-                .gender("male")
+                .gender(GenderEnum.MALE)
                 .phone("987654321")
                 .role(RoleEnum.DOCTOR)
                 .speciality("Cardiology")
@@ -98,7 +99,7 @@ public class AuthServiceImplTest {
         user.setEmail("johndoe@mail.com");
         user.setPassword("encodedPassword");
         user.setBirthDate(LocalDate.of(1990, 1, 1));
-        user.setGender("male");
+        user.setGender(GenderEnum.MALE);
         user.setPhone("123456789");
         user.setEnabled(false);
 
@@ -121,12 +122,12 @@ public class AuthServiceImplTest {
         savedPatient.setFirstName("John");
         savedPatient.setLastName("Doe");
         savedPatient.setEmail("johndoe@mail.com");
-        savedPatient.setPassword("encodedPassword");
+        savedPatient.setPassword("MyPassw@rd123");
         savedPatient.setBirthDate(LocalDate.of(1990, 1, 1));
-        savedPatient.setGender("male");
+        savedPatient.setGender(GenderEnum.MALE);
         savedPatient.setPhone("123456789");
 
-        Mockito.when(passwordEncoder.encode(patientRequest.getPassword())).thenReturn("encodedPassword");
+        Mockito.when(passwordEncoder.encode(patientRequest.getPassword())).thenReturn("MyPassw@rd123");
         Mockito.when(userRepository.save(any(Patient.class))).thenReturn(savedPatient);
 
         // Act
@@ -137,7 +138,7 @@ public class AuthServiceImplTest {
         assertEquals("Doe", response.getLastName());
         assertEquals("Mitre 123", response.getAddress());
         assertEquals("johndoe@mail.com", response.getEmail());
-        assertEquals("encodedPassword", response.getPassword());
+        assertEquals("MyPassw@rd123", response.getPassword());
         assertEquals(false, response.isEnabled());
         assertEquals(RoleEnum.PATIENT, response.getRole());
     }
@@ -157,7 +158,7 @@ public class AuthServiceImplTest {
         savedDoctor.setEmail("drsmith@mail.com");
         savedDoctor.setPassword("encodedPassword");
         savedDoctor.setBirthDate(LocalDate.of(1980, 2, 2));
-        savedDoctor.setGender("male");
+        savedDoctor.setGender(GenderEnum.MALE);
         savedDoctor.setPhone("987654321");
 
         Mockito.when(passwordEncoder.encode(doctorRequest.getPassword())).thenReturn("encodedPassword");

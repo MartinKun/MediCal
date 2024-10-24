@@ -1,5 +1,6 @@
 package com.app.repository;
 
+import com.app.controller.dto.enums.GenderEnum;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
@@ -34,9 +35,9 @@ public class UserRepositoryUnitTest {
         user.setFirstName("John");
         user.setLastName("Doe");
         user.setEmail("johndoe@mail.com");
-        user.setPassword("1234567");
+        user.setPassword("MyPassw@rd123");
         user.setBirthDate(LocalDate.of(1990, 1, 1));
-        user.setGender("male");
+        user.setGender(GenderEnum.MALE);
         user.setPhone("123456789");
         user.setEnabled(false);
 
@@ -64,9 +65,9 @@ public class UserRepositoryUnitTest {
         user.setFirstName("John");
         user.setLastName("Doe");
         user.setEmail("doctordoe@mail.com");
-        user.setPassword("1234567");
+        user.setPassword("MyPassw@rd123");
         user.setBirthDate(LocalDate.of(1990, 1, 1));
-        user.setGender("male");
+        user.setGender(GenderEnum.MALE);
         user.setPhone("123456789");
         user.setEnabled(false);
 

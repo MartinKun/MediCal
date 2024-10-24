@@ -1,14 +1,15 @@
 package com.app.controller;
 
+import com.app.controller.dto.enums.GenderEnum;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.*;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
-import com.app.exception.IncompleteFieldsException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.app.service.implementation.EmailServiceImpl;
+import com.app.validation.RegisterUserRequestValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,9 @@ public class AuthControllerTest {
     private RegisterUserRequest patientRequest;
     private RegisterUserRequest doctorRequest;
 
+    @MockBean
+    private RegisterUserRequestValidator registerUserRequestValidator;
+
     @BeforeEach
     public void setup()
     {
@@ -62,11 +66,11 @@ public class AuthControllerTest {
         patientRequest.setFirstName("John");
         patientRequest.setLastName("Doe");
         patientRequest.setEmail("johndoe@mail.com");
-        patientRequest.setPassword("password123");
+        patientRequest.setPassword("MyPassw@rd123");
         patientRequest.setBirthDate(
                 LocalDate.of(1990, 1, 1)
         );
-        patientRequest.setGender("male");
+        patientRequest.setGender(GenderEnum.MALE);
         patientRequest.setPhone("123456");
         patientRequest.setRole(RoleEnum.PATIENT);
         patientRequest.setAddress("123 Street");
@@ -75,11 +79,11 @@ public class AuthControllerTest {
         doctorRequest.setFirstName("Jane");
         doctorRequest.setLastName("Smith");
         doctorRequest.setEmail("janesmith@mail.com");
-        doctorRequest.setPassword("password123");
+        doctorRequest.setPassword("MyPassw@rd123");
         doctorRequest.setBirthDate(
                 LocalDate.of(1990, 1, 1)
         );
-        doctorRequest.setGender("male");
+        doctorRequest.setGender(GenderEnum.MALE);
         doctorRequest.setPhone("123456");
         doctorRequest.setRole(RoleEnum.DOCTOR);
         doctorRequest.setLicense("LICENSE123");
@@ -99,9 +103,9 @@ public class AuthControllerTest {
         patientResponse.setFirstName("John");
         patientResponse.setLastName("Doe");
         patientResponse.setEmail("johndoe@mail.com");
-        patientResponse.setPassword("password123");
+        patientResponse.setPassword("MyPassw@rd123");
         patientResponse.setBirthDate(LocalDate.of(1990, 1, 1));
-        patientResponse.setGender("male");
+        patientResponse.setGender(GenderEnum.MALE);
         patientResponse.setPhone("123456");
         patientResponse.setRole(RoleEnum.PATIENT);
 
@@ -117,10 +121,10 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.email").value("johndoe@mail.com"))
-                .andExpect(jsonPath("$.password").value("password123"))
+                .andExpect(jsonPath("$.password").value("MyPassw@rd123"))
                 .andExpect(jsonPath("$.address").value("123 Street"))
                 .andExpect(jsonPath("$.birthDate").value("1990-01-01"))
-                .andExpect(jsonPath("$.gender").value("male"))
+                .andExpect(jsonPath("$.gender").value("MALE"))
                 .andExpect(jsonPath("$.phone").value("123456"))
                 .andExpect(jsonPath("$.role").value("PATIENT"))
                 .andExpect(jsonPath("$.enabled").value(false));
@@ -140,9 +144,9 @@ public class AuthControllerTest {
         doctorResponse.setFirstName("Jane");
         doctorResponse.setLastName("Smith");
         doctorResponse.setEmail("janesmith@mail.com");
-        doctorResponse.setPassword("password123");
+        doctorResponse.setPassword("MyPassw@rd123");
         doctorResponse.setBirthDate(LocalDate.of(1990, 1, 1));
-        doctorResponse.setGender("female");
+        doctorResponse.setGender(GenderEnum.FEMALE);
         doctorResponse.setPhone("123456");
         doctorResponse.setRole(RoleEnum.DOCTOR);
 
@@ -158,12 +162,12 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.firstName").value("Jane"))
                 .andExpect(jsonPath("$.lastName").value("Smith"))
                 .andExpect(jsonPath("$.email").value("janesmith@mail.com"))
-                .andExpect(jsonPath("$.password").value("password123"))
+                .andExpect(jsonPath("$.password").value("MyPassw@rd123"))
                 .andExpect(jsonPath("$.license").value("LICENSE123"))
                 .andExpect(jsonPath("$.speciality").value("Cardiology"))
                 .andExpect(jsonPath("$.officeAddress").value("456 Avenue"))
                 .andExpect(jsonPath("$.birthDate").value("1990-01-01"))
-                .andExpect(jsonPath("$.gender").value("female"))
+                .andExpect(jsonPath("$.gender").value("FEMALE"))
                 .andExpect(jsonPath("$.phone").value("123456"))
                 .andExpect(jsonPath("$.role").value("DOCTOR"))
                 .andExpect(jsonPath("$.enabled").value(false));
@@ -173,41 +177,7 @@ public class AuthControllerTest {
 
     @Test
     @Order(3)
-    @DisplayName("Test 3: register patient with missing fields")
-    public void testRegisterPatientMissingFields() throws Exception {
-        patientRequest.setAddress(null);
-
-        when(authServiceImpl.register(any(RegisterUserRequest.class)))
-                .thenThrow(new IncompleteFieldsException("Incomplete fields for Patient"));
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patientRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.errors.error").value("Incomplete fields for Patient"));
-    }
-
-    @Test
-    @Order(4)
-    @DisplayName("Test 4: register doctor with missing fields")
-    public void testRegisterDoctorMissingFields() throws Exception {
-        doctorRequest.setOfficeAddress(null);
-
-        when(authServiceImpl.register(any(RegisterUserRequest.class)))
-                .thenThrow(new IncompleteFieldsException("Incomplete fields for Doctor"));
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(patientRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.errors.error").value("Incomplete fields for Doctor"));
-    }
-
-    @Test
-    @Order(5)
-    @DisplayName("Test 5: enable user with valid token")
+    @DisplayName("Test 3: enable user with valid token")
     public void testEnableUser() throws Exception {
 
         ConfirmUserRequest confirmUserRequest = ConfirmUserRequest.builder()
@@ -221,9 +191,9 @@ public class AuthControllerTest {
         patientResponse.setFirstName("John");
         patientResponse.setLastName("Doe");
         patientResponse.setEmail("johndoe@mail.com");
-        patientResponse.setPassword("password123");
+        patientResponse.setPassword("MyPassw@rd123");
         patientResponse.setBirthDate(LocalDate.of(1990, 1, 1));
-        patientResponse.setGender("male");
+        patientResponse.setGender(GenderEnum.MALE);
         patientResponse.setPhone("123456");
         patientResponse.setRole(RoleEnum.PATIENT);
         patientResponse.setEnabled(true);
@@ -238,10 +208,10 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.firstName").value("John"))
                 .andExpect(jsonPath("$.lastName").value("Doe"))
                 .andExpect(jsonPath("$.email").value("johndoe@mail.com"))
-                .andExpect(jsonPath("$.password").value("password123"))
+                .andExpect(jsonPath("$.password").value("MyPassw@rd123"))
                 .andExpect(jsonPath("$.address").value("123 Street"))
                 .andExpect(jsonPath("$.birthDate").value("1990-01-01"))
-                .andExpect(jsonPath("$.gender").value("male"))
+                .andExpect(jsonPath("$.gender").value("MALE"))
                 .andExpect(jsonPath("$.phone").value("123456"))
                 .andExpect(jsonPath("$.role").value("PATIENT"))
                 .andExpect(jsonPath("$.enabled").value(true));
@@ -250,13 +220,13 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Order(6)
-    @DisplayName("Test 6: Login User Successfully")
+    @Order(4)
+    @DisplayName("Test 4: Login User Successfully")
     public void testLoginUser() throws Exception {
 
         LoginRequest request = LoginRequest.builder()
                 .email("janesmith@mail.com")
-                .password("password123")
+                .password("MyPassw@rd123")
                 .build();
 
         LoginResponse response = LoginResponse.builder()
@@ -278,8 +248,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Order(7)
-    @DisplayName("Test 7: Forgot Password Successfully")
+    @Order(5)
+    @DisplayName("Test 5: Forgot Password Successfully")
     public void testForgotPassword() throws Exception {
         ForgotPassRequest request = ForgotPassRequest.builder()
                 .email("johndoe@mail.com")
@@ -304,8 +274,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Order(8)
-    @DisplayName("Test 8: Reset Password Successfully")
+    @Order(6)
+    @DisplayName("Test 6: Reset Password Successfully")
     public void testResetPassword() throws Exception {
         ResetPassRequest request = ResetPassRequest.builder()
                 .token("resetToken123")
@@ -322,6 +292,317 @@ public class AuthControllerTest {
                 .andExpect(content().string("Password reset successfully"));
 
         verify(authServiceImpl).resetPassword(any(ResetPassRequest.class));
+    }
+
+    /* Validations */
+
+    @Test
+    @DisplayName("Test 7: Validate Password Pattern Error")
+    @Order(7)
+    public void invalidPasswordPatternTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("password12345")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .gender(GenderEnum.MALE)
+                .phone("1234567890")
+                .role(RoleEnum.PATIENT)
+                .address("123 Main St")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.password")
+                        .value("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character, and must be at least 8 characters long"));
+    }
+
+    @Test
+    @DisplayName("Test 8: Validate Blank Password Error")
+    @Order(8)
+    public void blankPasswordTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .gender(GenderEnum.MALE)
+                .phone("1234567890")
+                .role(RoleEnum.PATIENT)
+                .address("123 Main St")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.password")
+                        .value("Password is required"));
+    }
+
+    @Test
+    @DisplayName("Test 9: Validate Age for Doctor Registration")
+    @Order(9)
+    public void underageDoctorTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("Myp@ssword123")
+                .birthDate(LocalDate.now().minusYears(17))
+                .gender(GenderEnum.MALE)
+                .phone("1234567890")
+                .role(RoleEnum.DOCTOR)
+                .license("LICENSE123")
+                .speciality("Cardiology")
+                .officeAddress("456 Avenue")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.birthDate")
+                        .value("User must be at least 18 years old."));
+    }
+
+    @Test
+    @DisplayName("Test 10: Validate Blank Birth Date Error")
+    @Order(10)
+    public void blankBirthDateTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("Myp@ssword123")
+                .gender(GenderEnum.MALE)
+                .phone("1234567890")
+                .role(RoleEnum.DOCTOR)
+                .license("LICENSE123")
+                .speciality("Cardiology")
+                .officeAddress("456 Avenue")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.birthDate")
+                        .value("Birth date is required"));
+    }
+
+    @Test
+    @DisplayName("Test 11: Invalid Gender for Doctor Registration")
+    @Order(11)
+    public void invalidGenderTest() throws Exception {
+        // Arrange
+        String invalidRequestJson = "{"
+                + "\"firstName\":\"John\","
+                + "\"lastName\":\"Doe\","
+                + "\"email\":\"john.doe@example.com\","
+                + "\"password\":\"Myp@ssword123\","
+                + "\"gender\":\"RANDOM\"," // Valor inválido
+                + "\"phone\":\"1234567890\","
+                + "\"role\":\"DOCTOR\","
+                + "\"license\":\"LICENSE123\","
+                + "\"speciality\":\"Cardiology\","
+                + "\"officeAddress\":\"456 Avenue\""
+                + "}";
+
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(invalidRequestJson))
+                .andExpect(status().is(500))
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.errors.error")
+                        .value("JSON parse error: Cannot deserialize value of type `com.app.controller.dto.enums.GenderEnum` from String \"RANDOM\": not one of the values accepted for Enum class: [OTHER, FEMALE, MALE]"));
+    }
+
+    @Test
+    @DisplayName("Test 12: Validate Blank Gender Error")
+    @Order(12)
+    public void blankGenderTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("Myp@ssword123")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .phone("1234567890")
+                .role(RoleEnum.DOCTOR)
+                .license("LICENSE123")
+                .speciality("Cardiology")
+                .officeAddress("456 Avenue")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.gender")
+                        .value("Gender is required"));
+    }
+
+    @Test
+    @DisplayName("Test 13: Validate Blank Phone Error")
+    @Order(13)
+    public void blankPhoneTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("Myp@ssword123")
+                .gender(GenderEnum.MALE)
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .role(RoleEnum.DOCTOR)
+                .license("LICENSE123")
+                .speciality("Cardiology")
+                .officeAddress("456 Avenue")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.phone")
+                        .value("Phone is required"));
+    }
+
+    @Test
+    @DisplayName("Test 14: Validate Blank Role Error")
+    @Order(14)
+    public void blankRoleTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("Myp@ssword123")
+                .phone("1234567890")
+                .gender(GenderEnum.MALE)
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .license("LICENSE123")
+                .speciality("Cardiology")
+                .officeAddress("456 Avenue")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.role")
+                        .value("Role is required"));
+    }
+
+    @Test
+    @DisplayName("Test 15: Validate Patient Fields Error")
+    @Order(15)
+    public void invalidPatientFieldsTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("Myp@ssword123")
+                .birthDate(LocalDate.now().minusYears(17))
+                .gender(GenderEnum.MALE)
+                .phone("1234567890")
+                .role(RoleEnum.PATIENT)
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.address")
+                        .value("Address is required for patients"));
+    }
+
+    @Test
+    @DisplayName("Test 16: Validate Doctor Fields Error")
+    @Order(16)
+    public void invalidDoctorFieldsTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("Myp@ssword123")
+                .birthDate(LocalDate.now().minusYears(17))
+                .gender(GenderEnum.MALE)
+                .phone("1234567890")
+                .role(RoleEnum.DOCTOR)
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.license")
+                        .value("License is required for doctors"))
+                .andExpect(jsonPath("$.errors.speciality")
+                        .value("Speciality is required for doctors"))
+                .andExpect(jsonPath("$.errors.officeAddress")
+                        .value("Office address is required for doctors"));
+    }
+
+    @Test
+    @DisplayName("Test 17: Validate Multiple Blank Fields Error")
+    @Order(17)
+    public void validateMultipleBlankFieldsTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .phone("1234567890")
+                .role(RoleEnum.DOCTOR)
+                .license("LICENSE123")
+                .speciality("Cardiology")
+                .officeAddress("456 Avenue")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.gender")
+                        .value("Gender is required"))
+                .andExpect(jsonPath("$.errors.birthDate")
+                        .value("Birth date is required"))
+                .andExpect(jsonPath("$.errors.password")
+                        .value("Password is required"));
     }
 
 }
