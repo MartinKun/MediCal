@@ -1,7 +1,6 @@
 package com.app.controller;
 
 import com.app.controller.dto.response.MessageResponse;
-import com.app.exception.IncompleteFieldsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -17,7 +16,7 @@ public class ControllerAdvice {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<MessageResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String errorMessage = error.getDefaultMessage();
@@ -28,7 +27,11 @@ public class ControllerAdvice {
                 errors.put("error", errorMessage);
             }
         });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest()
+                .body(new MessageResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        errors)
+                );
     }
 
     @ExceptionHandler(Exception.class)
@@ -38,19 +41,6 @@ public class ControllerAdvice {
         return ResponseEntity.internalServerError()
                 .body(new MessageResponse(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                        errorMap)
-                );
-    }
-
-    @ExceptionHandler(IncompleteFieldsException.class)
-    public ResponseEntity<MessageResponse> handleIncompleteFieldsException(
-            IncompleteFieldsException ex
-    ) {
-        Map<String, String> errorMap = new HashMap<>();
-        errorMap.put("error", ex.getMessage());
-        return ResponseEntity.badRequest()
-                .body(new MessageResponse(
-                        HttpStatus.BAD_REQUEST.value(),
                         errorMap)
                 );
     }
