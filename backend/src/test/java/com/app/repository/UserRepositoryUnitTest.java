@@ -81,4 +81,15 @@ public class UserRepositoryUnitTest {
         assertEquals("MD123456", ((Doctor) retrievedUser.get()).getLicense());
         assertEquals("123 Main St, Springfield", ((Doctor) retrievedUser.get()).getOfficeAddress());
     }
+
+    @Test
+    @DisplayName("Test 3: Find Non-existent User by Email")
+    @Order(3)
+    public void findNonExistentUserByEmailTest() {
+        // Act
+        Optional<User> retrievedUser = userRepository.findUserByEmail("nonexistent@mail.com");
+
+        // Verify
+        assertFalse(retrievedUser.isPresent(), "Expected no user to be found with the given email");
+    }
 }

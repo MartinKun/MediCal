@@ -364,4 +364,23 @@ public class AuthServiceImplTest {
         Mockito.verify(userRepository).save(user);
     }
 
+    @Test
+    @DisplayName("Test 10: Email Exists")
+    @Order(10)
+    public void testEmailExists() {
+        // Arrange
+        String existingEmail = "existing@mail.com";
+        String nonExistingEmail = "nonexisting@mail.com";
+
+        // Mocking behavior
+        Mockito.when(userRepository.findUserByEmail(existingEmail)).thenReturn(Optional.of(new Patient()));
+        Mockito.when(userRepository.findUserByEmail(nonExistingEmail)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertTrue(authServiceImpl.emailExists(existingEmail), "Expected email to exist");
+        assertFalse(authServiceImpl.emailExists(nonExistingEmail), "Expected email not to exist");
+        Mockito.verify(userRepository).findUserByEmail(existingEmail);
+        Mockito.verify(userRepository).findUserByEmail(nonExistingEmail);
+    }
+
 }

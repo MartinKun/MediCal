@@ -605,4 +605,35 @@ public class AuthControllerTest {
                         .value("Password is required"));
     }
 
+    @Test
+    @Order(18)
+    @DisplayName("Test 18: Email Already Exists Exception")
+    public void testEmailAlreadyExistsException() throws Exception {
+
+        RegisterUserRequest request = RegisterUserRequest.builder()
+                .firstName("Jane")
+                .lastName("Doe")
+                .email("johndoe@mail.com")
+                .password("Secure@123")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .gender(GenderEnum.FEMALE)
+                .phone("1234567890")
+                .role(RoleEnum.PATIENT)
+                .address("123 Main St")
+                .build();
+
+        when(authServiceImpl.emailExists(anyString())).thenReturn(true);
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.errors.error")
+                        .value("The email johndoe@mail.com is already registered."));
+
+        verify(authServiceImpl).emailExists(anyString());
+    }
+
 }
