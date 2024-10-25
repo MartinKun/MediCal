@@ -3,6 +3,7 @@ package com.app.controller;
 import com.app.controller.dto.request.*;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
+import com.app.exception.EmailAlreadyExistsException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.app.service.implementation.EmailServiceImpl;
 import jakarta.validation.Valid;
@@ -25,6 +26,8 @@ public class AuthController {
     public ResponseEntity<UserRegistrationResponse> register(
             @Valid @RequestBody RegisterUserRequest request
     ) {
+        if(authService.emailExists(request.getEmail()))
+            throw new EmailAlreadyExistsException(String.format("The email %s is already registered.",request.getEmail()));
 
         UserRegistrationResponse response = authService.register(request);
 

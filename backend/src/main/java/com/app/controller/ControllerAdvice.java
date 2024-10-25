@@ -1,6 +1,7 @@
 package com.app.controller;
 
 import com.app.controller.dto.response.MessageResponse;
+import com.app.exception.EmailAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,7 +17,9 @@ public class ControllerAdvice {
 
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MessageResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<MessageResponse> handleValidationExceptions(
+            MethodArgumentNotValidException ex
+    ) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String errorMessage = error.getDefaultMessage();
@@ -35,7 +38,22 @@ public class ControllerAdvice {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<MessageResponse> throwGeneralException(Exception ex) {
+    public ResponseEntity<MessageResponse> throwGeneralException(
+            Exception ex
+    ) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("error", ex.getMessage());
+        return ResponseEntity.internalServerError()
+                .body(new MessageResponse(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        errorMap)
+                );
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<MessageResponse> throwEmailAlreadyExistsException(
+            Exception ex
+    ) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("error", ex.getMessage());
         return ResponseEntity.internalServerError()
