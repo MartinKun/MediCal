@@ -56,9 +56,9 @@ public class ControllerAdvice {
     ) {
         Map<String, String> errorMap = new HashMap<>();
         errorMap.put("error", ex.getMessage());
-        return ResponseEntity.internalServerError()
+        return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new MessageResponse(
-                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        HttpStatus.CONFLICT.value(),
                         errorMap)
                 );
     }
