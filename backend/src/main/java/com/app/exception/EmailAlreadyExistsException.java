@@ -1,11 +1,13 @@
 package com.app.exception;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
+public class EmailAlreadyExistsException extends ConflictException {
+    private static final String DEFAULT_MESSAGE = "Email already exists.";
 
-@ResponseStatus(HttpStatus.CONFLICT)
-public class EmailAlreadyExistsException extends RuntimeException {
+    public EmailAlreadyExistsException() {
+        super(DEFAULT_MESSAGE);
+    }
+
     public EmailAlreadyExistsException(String message) {
-        super(message);
+        super(message != null ? message : DEFAULT_MESSAGE);
     }
 }

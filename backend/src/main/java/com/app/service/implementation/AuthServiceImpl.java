@@ -9,6 +9,8 @@ import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
+import com.app.exception.UserAlreadyEnabledException;
+import com.app.exception.UserDoesNotExistException;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
@@ -76,7 +78,8 @@ public class AuthServiceImpl implements AuthService {
         String username = jwtUtils.extractUsername(decodedJWT);
 
         User user = userRepository.findUserByEmail(username)
-                .orElseThrow(() -> new RuntimeException("User does not exist"));
+                .orElseThrow(UserDoesNotExistException::new);
+        if(user.isEnabled()) throw new UserAlreadyEnabledException();
 
         user.setEnabled(true);
         User response = userRepository.save(user);

@@ -1,7 +1,8 @@
 package com.app.controller;
 
 import com.app.controller.dto.response.MessageResponse;
-import com.app.exception.EmailAlreadyExistsException;
+import com.app.exception.ConflictException;
+import com.app.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -50,8 +51,8 @@ public class ControllerAdvice {
                 );
     }
 
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<MessageResponse> throwEmailAlreadyExistsException(
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<MessageResponse> throwConflictException(
             Exception ex
     ) {
         Map<String, String> errorMap = new HashMap<>();
@@ -59,6 +60,19 @@ public class ControllerAdvice {
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(new MessageResponse(
                         HttpStatus.CONFLICT.value(),
+                        errorMap)
+                );
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<MessageResponse> throwNotFoundException(
+            Exception ex
+    ) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new MessageResponse(
+                        HttpStatus.NOT_FOUND.value(),
                         errorMap)
                 );
     }
