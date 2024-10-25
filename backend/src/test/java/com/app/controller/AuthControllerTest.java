@@ -7,6 +7,7 @@ import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
+import com.app.exception.UserAlreadyEnabledException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.app.service.implementation.EmailServiceImpl;
 import com.app.validation.RegisterUserRequestValidator;
@@ -28,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.*;
@@ -605,6 +607,8 @@ public class AuthControllerTest {
                         .value("Password is required"));
     }
 
+    /* Exceptions */
+
     @Test
     @Order(18)
     @DisplayName("Test 18: Email Already Exists Exception")
@@ -634,6 +638,28 @@ public class AuthControllerTest {
                         .value("The email johndoe@mail.com is already registered."));
 
         verify(authServiceImpl).emailExists(anyString());
+    }
+
+    @Test
+    @Order(20)
+    @DisplayName("Test 20: User Already Enabled Exception - Controller")
+    public void testUserAlreadyEnabledExceptionController() throws Exception {
+        // Arrange
+        String token = "validToken";
+        ConfirmUserRequest request = new ConfirmUserRequest(token);
+
+        when(authServiceImpl.confirmUser(token)).thenThrow(new UserAlreadyEnabledException());
+
+        // Act & Assert
+        mockMvc.perform(put("/api/v1/auth/confirm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.errors.error")
+                        .value("User has already been enabled."));
+
+        verify(authServiceImpl).confirmUser(token);
     }
 
 }

@@ -10,6 +10,8 @@ import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
+import com.app.exception.UserAlreadyEnabledException;
+import com.app.exception.UserDoesNotExistException;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
@@ -112,9 +114,9 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test 1: Register a Patient User Successfully")
+    @DisplayName("Test 1: Register a Patient User Successfully with Valid Data")
     @Order(1)
-    public void patientRegistrationTest() {
+    public void shouldRegisterPatientSuccessfully_whenValidDataIsProvided() {
         // Arrange
         Patient savedPatient = Patient.builder()
                 .address("Mitre 123")
@@ -144,9 +146,9 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test 2: Register a Doctor User Successfully")
+    @DisplayName("Test 2: Register a Doctor User Successfully with Valid Data")
     @Order(2)
-    public void doctorRegistrationTest() {
+    public void shouldRegisterDoctorSuccessfully_whenValidDataIsProvided() {
         // Arrange
         Doctor savedDoctor = Doctor.builder()
                 .speciality("Cardiology")
@@ -180,12 +182,26 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test 3: Enable a User Successfully")
+    @DisplayName("Test 3: Enable a User Successfully with a Valid Token")
     @Order(3)
-    public void enableUserTest() {
+    public void shouldEnableUserSuccessfully_whenValidTokenIsProvided() {
         // Arrange
         String token = "validToken";
         String email = "johndoe@mail.com";
+
+        user.setEnabled(false);
+
+        User userAfterConfirm = Patient.builder()
+                .address("Mitre 123")
+                .build();
+        userAfterConfirm.setFirstName("John");
+        userAfterConfirm.setLastName("Doe");
+        userAfterConfirm.setEmail(email);
+        userAfterConfirm.setPassword("encodedPassword");
+        userAfterConfirm.setBirthDate(LocalDate.of(1990, 1, 1));
+        userAfterConfirm.setGender(GenderEnum.MALE);
+        userAfterConfirm.setPhone("123456789");
+        userAfterConfirm.setEnabled(true);
 
 
         Mockito.when(jwtUtils.validateToken(token, TokenType.CONFIRM)).thenReturn(decodedJWT);
@@ -193,8 +209,7 @@ public class AuthServiceImplTest {
 
         Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(user));
 
-        user.setEnabled(true);
-        Mockito.when(userRepository.save(user)).thenReturn(user);
+        Mockito.when(userRepository.save(user)).thenReturn(userAfterConfirm);
 
         // Act
         UserRegistrationResponse response = authServiceImpl.confirmUser(token);
@@ -210,9 +225,9 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test 4: User Login Successfully")
+    @DisplayName("Login User Successfully with Valid Credentials")
     @Order(4)
-    public void loginUserTest() {
+    public void shouldLoginUserSuccessfully_whenValidCredentialsIsProvidedTest() {
         // Arrange
         String token = "generatedJwtToken";
 
@@ -234,9 +249,9 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test 5: Confirm User Successfully")
+    @DisplayName("Test 5: Confirm User Successfully with Valid Token")
     @Order(5)
-    public void confirmUserTest() {
+    public void shouldConfirmUserSuccessfully_whenValidTokenIsProvidedTest() {
         // Arrange
         String token = "confirmToken";
         String email = "johndoe@mail.com";
@@ -266,47 +281,47 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test 6: Generate Confirm Token Successfully")
+    @DisplayName("Test 6: Generate Confirm Token Successfully with Valid Username")
     @Order(6)
-    public void generateConfirmTokenTest() {
+    public void shouldGenerateConfirmTokenSuccessfully_whenValidUsernameIsProvidedTest() {
         // Arrange
-        String email = "johndoe@mail.com";
+        String username = "johndoe@mail.com";
         String token = "generatedConfirmToken";
 
-        Mockito.when(jwtUtils.createConfirmToken(email)).thenReturn(token);
+        Mockito.when(jwtUtils.createConfirmToken(username)).thenReturn(token);
 
         // Act
-        String result = authServiceImpl.generateConfirmToken(email);
+        String result = authServiceImpl.generateConfirmToken(username);
 
         // Assert
         assertNotNull(result);
         assertEquals(token, result);
-        Mockito.verify(jwtUtils).createConfirmToken(email);
+        Mockito.verify(jwtUtils).createConfirmToken(username);
     }
 
     @Test
-    @DisplayName("Test 7: Generate Password Reset Token Successfully")
+    @DisplayName("Test 7: Generate Password Reset Token Successfully with Valid Username")
     @Order(7)
-    public void generatePasswordResetTokenTest() {
+    public void shouldGeneratePasswordResetTokenSuccessfully_whenValidUsernameIsProvidedTest() {
         // Arrange
-        String email = "johndoe@mail.com";
+        String username = "johndoe@mail.com";
         String token = "generatedResetToken";
 
-        Mockito.when(jwtUtils.createResetPasswordToken(email)).thenReturn(token);
+        Mockito.when(jwtUtils.createResetPasswordToken(username)).thenReturn(token);
 
         // Act
-        String result = authServiceImpl.generatePasswordResetToken(email);
+        String result = authServiceImpl.generatePasswordResetToken(username);
 
         // Assert
         assertNotNull(result);
         assertEquals(token, result);
-        Mockito.verify(jwtUtils).createResetPasswordToken(email);
+        Mockito.verify(jwtUtils).createResetPasswordToken(username);
     }
 
     @Test
-    @DisplayName("Test 8: Check if Email Exists")
+    @DisplayName("Test 8: Check if Email Exists Successfully")
     @Order(8)
-    public void emailExistsTest() {
+    public void shouldCheckIfEmailExists_whenEmailIsProvided() {
         // Arrange
         String email = "johndoe@mail.com";
 
@@ -327,9 +342,9 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test 9: Reset Password Successfully")
+    @DisplayName("Test 9: Reset Password Successfully When Valid Token and New Password Are Provided")
     @Order(9)
-    public void resetPasswordTest() {
+    public void shouldResetPasswordSuccessfully_whenValidTokenAndNewPasswordIsProvided() {
         // Arrange
         String token = "resetToken123";
         String newPassword = "newSecurePassword";
@@ -365,22 +380,47 @@ public class AuthServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test 10: Email Exists")
     @Order(10)
-    public void testEmailExists() {
+    @DisplayName("Test 10: Confirm User - User Does Not Exist Exception")
+    public void shouldThrowUserDoesNotExistException_whenUserDoesNotExist() {
         // Arrange
-        String existingEmail = "existing@mail.com";
-        String nonExistingEmail = "nonexisting@mail.com";
+        String token = "validToken";
+        String email = "nonexistent@mail.com";
 
         // Mocking behavior
-        Mockito.when(userRepository.findUserByEmail(existingEmail)).thenReturn(Optional.of(new Patient()));
-        Mockito.when(userRepository.findUserByEmail(nonExistingEmail)).thenReturn(Optional.empty());
+        Mockito.when(jwtUtils.validateToken(token, TokenType.CONFIRM)).thenReturn(decodedJWT);
+        Mockito.when(jwtUtils.extractUsername(decodedJWT)).thenReturn(email);
+        Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertTrue(authServiceImpl.emailExists(existingEmail), "Expected email to exist");
-        assertFalse(authServiceImpl.emailExists(nonExistingEmail), "Expected email not to exist");
-        Mockito.verify(userRepository).findUserByEmail(existingEmail);
-        Mockito.verify(userRepository).findUserByEmail(nonExistingEmail);
+        assertThrows(UserDoesNotExistException.class, () -> authServiceImpl.confirmUser(token));
+
+        Mockito.verify(userRepository).findUserByEmail(email);
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("Test 11: Confirm User - User Already Enabled Exception")
+    public void shouldThrowUserAlreadyEnabledException_whenUserIsAlreadyEnabled() {
+        // Arrange
+        String token = "validToken";
+        String email = "enableduser@mail.com";
+
+        User enabledUser = Patient.builder()
+                .address("Mitre 123")
+                .build();
+        enabledUser.setEmail(email);
+        enabledUser.setEnabled(true);
+
+        // Mock behavior
+        Mockito.when(jwtUtils.validateToken(token, TokenType.CONFIRM)).thenReturn(decodedJWT);
+        Mockito.when(jwtUtils.extractUsername(decodedJWT)).thenReturn(email);
+        Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(enabledUser));
+
+        // Act & Assert
+        assertThrows(UserAlreadyEnabledException.class, () -> authServiceImpl.confirmUser(token));
+
+        Mockito.verify(userRepository).findUserByEmail(email);
     }
 
 }
