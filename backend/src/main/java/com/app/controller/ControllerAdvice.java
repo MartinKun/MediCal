@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.controller.dto.response.MessageResponse;
 import com.app.exception.ConflictException;
+import com.app.exception.ForbiddenException;
 import com.app.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +74,19 @@ public class ControllerAdvice {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new MessageResponse(
                         HttpStatus.NOT_FOUND.value(),
+                        errorMap)
+                );
+    }
+
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<MessageResponse> throwForbiddenException(
+            Exception ex
+    ) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new MessageResponse(
+                        HttpStatus.FORBIDDEN.value(),
                         errorMap)
                 );
     }

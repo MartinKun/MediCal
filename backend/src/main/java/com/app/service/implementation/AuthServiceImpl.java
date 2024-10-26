@@ -11,6 +11,7 @@ import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.exception.UserAlreadyEnabledException;
 import com.app.exception.UserDoesNotExistException;
+import com.app.exception.UserNotEnabledException;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
 import com.app.persistence.entity.User;
@@ -54,6 +55,10 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
+
+        User user = userRepository.findUserByEmail(request.getEmail())
+                .orElseThrow(UserDoesNotExistException::new);
+        if(!user.isEnabled()) throw new UserNotEnabledException();
 
         Authentication authentication =
                 authenticationManager.authenticate(
