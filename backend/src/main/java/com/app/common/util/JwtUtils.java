@@ -1,6 +1,7 @@
 package com.app.common.util;
 
 import com.app.common.enums.TokenType;
+import com.app.exception.InvalidTokenException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -87,7 +88,7 @@ public class JwtUtils {
             decodedJWT = verifier.verify(token);
             return decodedJWT;
         } catch (JWTVerificationException exception) {
-            throw new JWTVerificationException("Token invalid, not Authorized");
+            throw new InvalidTokenException();
         }
     }
 

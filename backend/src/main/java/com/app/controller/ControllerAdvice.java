@@ -4,8 +4,10 @@ import com.app.controller.dto.response.MessageResponse;
 import com.app.exception.ConflictException;
 import com.app.exception.ForbiddenException;
 import com.app.exception.NotFoundException;
+import com.app.exception.UnauthorizedException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -87,6 +89,32 @@ public class ControllerAdvice {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new MessageResponse(
                         HttpStatus.FORBIDDEN.value(),
+                        errorMap)
+                );
+    }
+
+    @ExceptionHandler({AuthenticationException.class})
+    public ResponseEntity<MessageResponse> throwAuthenticationException(
+            AuthenticationException ex
+    ) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new MessageResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        errorMap)
+                );
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ResponseEntity<MessageResponse> throwUnauthorizedException(
+            Exception ex
+    ) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new MessageResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
                         errorMap)
                 );
     }

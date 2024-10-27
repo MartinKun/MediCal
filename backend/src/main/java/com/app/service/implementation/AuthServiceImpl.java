@@ -116,7 +116,7 @@ public class AuthServiceImpl implements AuthService {
         String username = jwtUtils.extractUsername(decodedJWT);
 
         User user = userRepository.findUserByEmail(username)
-                .orElseThrow(() -> new RuntimeException("User does not exist"));
+                .orElseThrow(UserDoesNotExistException::new);
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);

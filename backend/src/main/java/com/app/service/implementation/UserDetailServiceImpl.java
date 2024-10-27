@@ -1,5 +1,6 @@
 package com.app.service.implementation;
 
+import com.app.exception.UserDoesNotExistException;
 import com.app.persistence.entity.User;
 import com.app.persistence.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throws UsernameNotFoundException {
        Optional<User> user = userRepository.findUserByEmail(username);
         if (!user.isPresent())
-            throw new UsernameNotFoundException("the user not exists");
+            throw new UserDoesNotExistException();
         return user.get();
     }
 }
