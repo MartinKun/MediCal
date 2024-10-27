@@ -7,6 +7,7 @@ import com.app.controller.dto.response.DoctorRegistrationResponse;
 import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
+import com.app.exception.InvalidTokenException;
 import com.app.exception.UserAlreadyEnabledException;
 import com.app.exception.UserNotEnabledException;
 import com.app.service.implementation.AuthServiceImpl;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -683,6 +685,50 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value(403))
                 .andExpect(jsonPath("$.errors.error")
                         .value("User is not enabled."));
+    }
+
+    @Test
+    @Order(21)
+    @DisplayName("Test 21: Authentication Exception")
+    public void testAuthenticationException() throws Exception {
+        // Arrange
+        LoginRequest request = LoginRequest.builder()
+                .email("johndoe@mail.com")
+                .password("IncorrectPassword123")
+                .build();
+
+        when(authServiceImpl.login(any(LoginRequest.class)))
+                .thenThrow(new AuthenticationException("Bad credentials") {});
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.errors.error")
+                        .value("Bad credentials"));
+    }
+
+    @Test
+    @Order(22)
+    @DisplayName("Test 22: Invalid Token Exception")
+    public void testInvalidTokenException() throws Exception {
+        // Arrange
+        ConfirmUserRequest request = ConfirmUserRequest.builder()
+                .token("invalidToken123")
+                .build();
+
+        when(authServiceImpl.confirmUser(anyString())).thenThrow(new InvalidTokenException());
+
+        // Act & Assert
+        mockMvc.perform(put("/api/v1/auth/confirm")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.status").value(401))
+                .andExpect(jsonPath("$.errors.error")
+                        .value("Token invalid, not Authorized"));
     }
 
 }
