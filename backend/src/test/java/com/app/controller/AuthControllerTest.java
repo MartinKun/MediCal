@@ -8,6 +8,7 @@ import com.app.controller.dto.response.LoginResponse;
 import com.app.controller.dto.response.PatientRegistrationResponse;
 import com.app.controller.dto.response.UserRegistrationResponse;
 import com.app.exception.UserAlreadyEnabledException;
+import com.app.exception.UserNotEnabledException;
 import com.app.service.implementation.AuthServiceImpl;
 import com.app.service.implementation.EmailServiceImpl;
 import com.app.validation.RegisterUserRequestValidator;
@@ -641,9 +642,9 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Order(20)
-    @DisplayName("Test 20: User Already Enabled Exception - Controller")
-    public void testUserAlreadyEnabledExceptionController() throws Exception {
+    @Order(19)
+    @DisplayName("Test 19: User Already Enabled Exception")
+    public void testUserAlreadyEnabledException() throws Exception {
         // Arrange
         String token = "validToken";
         ConfirmUserRequest request = new ConfirmUserRequest(token);
@@ -660,6 +661,28 @@ public class AuthControllerTest {
                         .value("User has already been enabled."));
 
         verify(authServiceImpl).confirmUser(token);
+    }
+
+    @Test
+    @Order(20)
+    @DisplayName("Test 20: User Not Enabled Exception")
+    public void testUserNotEnabledException() throws Exception {
+        // Arrange
+        LoginRequest request = LoginRequest.builder()
+                .email("johndoe@mail.com")
+                .password("Myp@ssword123")
+                .build();
+
+        when(authServiceImpl.login(any(LoginRequest.class))).thenThrow(new UserNotEnabledException());
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(403))
+                .andExpect(jsonPath("$.errors.error")
+                        .value("User is not enabled."));
     }
 
 }
