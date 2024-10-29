@@ -7,6 +7,10 @@ import { signupInputFields } from "@/util/inputFields";
 import { useRouter } from "next/navigation";
 import services from "@/services";
 import { useBoundStore } from "@/store/store";
+import { validateAge, validatePassword } from "@/util/validations";
+import { useState } from "react";
+import { ErrorI } from "@/interfaces/errorsInterface";
+import handleErrorsForm from "@/hook/handleErrorsForm";
 
 export const DoctorRegistrationForm = () => {
   const showLoader = useBoundStore((state) => state.showLoader);
@@ -25,8 +29,19 @@ export const DoctorRegistrationForm = () => {
 
   const router = useRouter();
 
+  const { errors, validateForm } = handleErrorsForm();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (
+      validateForm({
+        password: formState.password,
+        birthDate: formState.birthDate,
+      })
+    )
+      return;
+
     const newDoctor = {
       firstName: formState.firstName,
       lastName: formState.lastName,
@@ -81,6 +96,9 @@ export const DoctorRegistrationForm = () => {
                 icon={field.icon}
                 value={formState[field.name as keyof typeof formState]}
                 handleChange={setFormState}
+                errorMessage={
+                  errors.find((error) => error.value === field.name)?.message
+                }
               />
             )
           )}
