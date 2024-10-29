@@ -7,9 +7,6 @@ import { signupInputFields } from "@/util/inputFields";
 import { useRouter } from "next/navigation";
 import services from "@/services";
 import { useBoundStore } from "@/store/store";
-import { validateAge, validatePassword } from "@/util/validations";
-import { useState } from "react";
-import { ErrorI } from "@/interfaces/errorsInterface";
 import handleErrorsForm from "@/hook/handleErrorsForm";
 
 export const DoctorRegistrationForm = () => {
