@@ -16,3 +16,4 @@ export { Calendar } from "./calendar/Calendar";
 export { PrivateNav } from "./nav/PrivateNav";
 export { PublicNav } from "./nav/PublicNav";
 export { Loader } from "./others/Loader";
+export {Toast} from "./others/Toast";

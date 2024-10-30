@@ -1,3 +1,4 @@
+import { LoaderSliceI } from "@/interfaces/sliceInterface";
 import { StateCreator } from "zustand";
 
 export const createLoaderSlice: StateCreator<LoaderSliceI> = (set) => ({

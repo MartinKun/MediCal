@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 export const LoginForm = () => {
   const showLoader = useBoundStore((state) => state.showLoader);
   const hideLoader = useBoundStore((state) => state.hideLoader);
+  const showError = useBoundStore((state) => state.showError);
   const setUser = useBoundStore((state) => state.setUser);
   const { formState, setFormState } = useFormState({ email: "", password: "" });
   const router = useRouter();
@@ -28,6 +29,7 @@ export const LoginForm = () => {
         router.push("/myAppointments");
       }
     } catch (error) {
+      showError("Error de inicio de sesión");
       console.error("Login failed:", error);
       hideLoader();
     }

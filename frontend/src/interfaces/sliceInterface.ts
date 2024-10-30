@@ -1,10 +1,18 @@
-interface LoaderSliceI {
+import { ToastI } from "./toastInterface";
+
+export interface LoaderSliceI {
   isShowLoader: boolean;
   showLoader: () => void;
   hideLoader: () => void;
 }
 
-interface UserI {
+export interface ToastSliceI {
+  toast: ToastI
+  showError: (message: string) => void,
+  hideToast: () => void;
+}
+
+export interface UserI {
   token: string | null;
   userData: {
     id: number;
@@ -15,7 +23,7 @@ interface UserI {
   } | null;
 }
 
-interface UserSliceI {
+export interface UserSliceI {
   user: UserI | null;
   setUser: (user: UserI) => void;
 }

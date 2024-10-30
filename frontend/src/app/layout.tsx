@@ -3,7 +3,7 @@
 import localFont from "next/font/local";
 import "./globals.css";
 import Header from "./common/Header";
-import { Loader } from "@/components";
+import { Loader, Toast } from "@/components";
 import { metadata } from "./config";
 import { useRouteChangeLoader } from "@/hook/useRouterChangeLoader";
 
@@ -40,6 +40,7 @@ export default function RootLayout({
                      via-pink-500
                      to-red-500"
         >
+          <Toast />
           <Loader />
           <Header />
           {children}
