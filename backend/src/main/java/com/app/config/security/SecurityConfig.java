@@ -54,6 +54,10 @@ public class SecurityConfig {
                     http.requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll();
                     http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/forgot-password").permitAll();
                     http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/reset-password").permitAll();
+                    /* Swagger */
+                    http.requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll();
+                    http.requestMatchers(HttpMethod.GET, "/swagger-ui.html").permitAll();
+                    http.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll();
 
                     // PRIVATE Endpoints
 
