@@ -62,8 +62,11 @@ export default function ConfirmUserFailure() {
                        text-white
                        mb-8"
           >
-            Lo sentimos, ha ocurrido un error al confirmar tu cuenta. Por favor,
-            vuelve a la página de registro e intenta nuevamente.
+            Lo sentimos, no hemos podido confirmar tu cuenta. Esto puede deberse
+            a que el enlace de confirmación ha expirado o es incorrecto, o a un
+            problema con el servidor. Por favor, vuelve a la página de registro
+            e intenta nuevamente. Si el problema persiste, contacta con nuestro
+            soporte.
           </p>
           <Link
             href={"/register"}

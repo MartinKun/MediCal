@@ -11,6 +11,7 @@ export const ForgotPasswordForm = () => {
   const { formState, setFormState } = useFormState({ email: "" });
   const showLoader = useBoundStore((state) => state.showLoader);
   const hideLoader = useBoundStore((state) => state.hideLoader);
+  const showError = useBoundStore((state) => state.showError);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -21,6 +22,9 @@ export const ForgotPasswordForm = () => {
       const response = await services.recoverPass(formState);
       if (response) router.push("/forgot-password/success");
     } catch (error) {
+      showError(
+        "Ha ocurrido un error. Vuelve a intentarlo más tarde o contacta con el equipo de soporte."
+      );
       console.error("Recover password failed:", error);
       hideLoader();
     }

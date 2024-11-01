@@ -11,18 +11,18 @@ export const Toast = () => {
   const hideToast = useBoundStore((state) => state.hideToast);
 
   useEffect(() => {
-    if (toast.isShowing) {
+    if (toast?.isShowing) {
       const timer = setTimeout(() => {
         hideToast();
       }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [toast.isShowing]);
+  }, [toast?.isShowing]);
 
   return (
     <>
-      {toast.isShowing && (
+      {toast?.isShowing && (
         <div
           className="fixed w-full
                      bottom-0 z-[900]

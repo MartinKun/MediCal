@@ -8,15 +8,18 @@ import { useRouter } from "next/navigation";
 import services from "@/services";
 import { useBoundStore } from "@/store/store";
 import handleErrorsForm from "@/hook/handleErrorsForm";
+import { AxiosError } from "axios";
 
 export const DoctorRegistrationForm = () => {
   const showLoader = useBoundStore((state) => state.showLoader);
-  const { formState, setFormState } = useFormState({
+  const hideLoader = useBoundStore((state) => state.hideLoader);
+  const showError = useBoundStore((state) => state.showError);
+  const { formState, setFormState, resetForm } = useFormState({
     firstName: "",
     lastName: "",
     birthDate: "",
     gender: "",
-    specialty: "",
+    speciality: "",
     license: "",
     phone: "",
     email: "",
@@ -44,7 +47,7 @@ export const DoctorRegistrationForm = () => {
       lastName: formState.lastName,
       birthDate: new Date(formState.birthDate),
       gender: formState.gender,
-      specialty: formState.specialty,
+      speciality: formState.speciality,
       license: formState.license,
       phone: formState.phone,
       email: formState.email,
@@ -58,12 +61,19 @@ export const DoctorRegistrationForm = () => {
       const response = await services.register(newDoctor);
       if (response) {
         router.push("/register/success");
-      } else {
-        router.push("/register/failure");
       }
     } catch (error) {
-      router.push("/register/failure");
-      console.error("Registration failed:", error);
+      if (error instanceof AxiosError && error.response?.data.status === 409) {
+        showError("El email que ingresó ya está registrado.");
+        resetForm();
+        hideLoader();
+        return;
+      }
+      showError(
+        "Ha ocurrido un error. Vuelve a intentarlo más tarde o contacta con el equipo de soporte."
+      );
+      resetForm();
+      hideLoader();
     }
   };
 

@@ -35,6 +35,17 @@ const handleErrorsForm = () => {
         ]);
         errorsFinded++;
       }
+
+      if(formState.password && formState.confirmPassword && (formState.password !== formState.confirmPassword)) {
+        setErrors( (prevErrors) => [
+          ...prevErrors,
+        {
+          value: "confirmPassword",
+          message: "Las contraseñas no coinciden.",
+        },
+      ]);
+      errorsFinded++;
+      }
       return errorsFinded > 0;
   }
 

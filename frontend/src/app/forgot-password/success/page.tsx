@@ -60,17 +60,18 @@ export default function ForgotPasswordSuccess() {
                        text-white
                        mb-8"
           >
-            Hemos enviado las instrucciones para recuperar tu contraseña a tu
-            dirección de correo electrónico. Por favor, revisa tu bandeja de
-            entrada y sigue los pasos indicados.
+            Hemos enviado instrucciones para recuperar tu contraseña a tu
+            dirección de correo electrónico, si está registrada en nuestro
+            sistema. Por favor, revisa tu bandeja de entrada y sigue los pasos
+            indicados.
           </p>
           <p
             className="text-md
                        text-white
                        mb-8"
           >
-            Si no recibes el correo en unos minutos, revisa tu carpeta de spam o
-            correo no deseado.
+            Si no recibes el correo en unos minutos, revisa también tu carpeta
+            de spam o correo no deseado.
           </p>
           <Link
             href={"/login"}

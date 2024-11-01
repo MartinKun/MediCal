@@ -78,7 +78,7 @@ export const signupInputFields = [
     icon: PhoneIcon,
   },
   {
-    name: "specialty",
+    name: "speciality",
     label: "Especialidad",
     type: "text",
     placeholder: "",

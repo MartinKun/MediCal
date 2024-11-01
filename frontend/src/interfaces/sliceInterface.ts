@@ -9,6 +9,8 @@ export interface LoaderSliceI {
 export interface ToastSliceI {
   toast: ToastI
   showError: (message: string) => void,
+  showWarning: (message: string) => void,
+  showSuccess: (message: string) => void,
   hideToast: () => void;
 }
 
