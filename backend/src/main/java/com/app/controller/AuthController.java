@@ -78,7 +78,7 @@ public class AuthController {
 
     @PutMapping("/reset-password")
     public ResponseEntity<String> resetPassword(
-            @RequestBody ResetPassRequest request
+            @Valid @RequestBody ResetPassRequest request
             ){
         authService.resetPassword(request);
 

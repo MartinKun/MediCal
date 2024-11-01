@@ -117,6 +117,7 @@ public class AuthServiceImpl implements AuthService {
 
         User user = userRepository.findUserByEmail(username)
                 .orElseThrow(UserDoesNotExistException::new);
+        if(!user.isEnabled()) throw new UserNotEnabledException();
 
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
