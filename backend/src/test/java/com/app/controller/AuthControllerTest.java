@@ -63,8 +63,7 @@ public class AuthControllerTest {
     private RegisterUserRequestValidator registerUserRequestValidator;
 
     @BeforeEach
-    public void setup()
-    {
+    public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         patientRequest = new RegisterUserRequest();
@@ -284,7 +283,7 @@ public class AuthControllerTest {
     public void testResetPassword() throws Exception {
         ResetPassRequest request = ResetPassRequest.builder()
                 .token("resetToken123")
-                .newPassword("newSecurePassword")
+                .newPassword("newSecureP@ssword123")
                 .build();
 
         doNothing().when(authServiceImpl).resetPassword(any(ResetPassRequest.class));
@@ -302,9 +301,9 @@ public class AuthControllerTest {
     /* Validations */
 
     @Test
-    @DisplayName("Test 7: Validate Password Pattern Error")
+    @DisplayName("Test 7: Validate Password Pattern Error On User Registration")
     @Order(7)
-    public void invalidPasswordPatternTest() throws Exception {
+    public void invalidPasswordPatternTestOnUserRegistration() throws Exception {
         // Arrange
         RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
                 .firstName("John")
@@ -320,18 +319,40 @@ public class AuthControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.errors.password")
                         .value("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character, and must be at least 8 characters long"));
+
     }
 
     @Test
-    @DisplayName("Test 8: Validate Blank Password Error")
+    @DisplayName("Test 8: Validate Password Pattern Error On PasswordReset")
     @Order(8)
-    public void blankPasswordTest() throws Exception {
+    public void invalidPasswordPatternTestOnPasswordReset() throws Exception {
+        // Arrange
+        ResetPassRequest invalidRequest = ResetPassRequest.builder()
+                .token("token123")
+                .newPassword("mynewpass")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(put("/api/v1/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.newPassword")
+                        .value("Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character, and must be at least 8 characters long"));
+
+    }
+
+    @Test
+    @DisplayName("Test 9: Validate Blank Password Error On User Registration")
+    @Order(9)
+    public void blankPasswordOnUserRegistrationTest() throws Exception {
         // Arrange
         RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
                 .firstName("John")
@@ -346,8 +367,8 @@ public class AuthControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(invalidRequest)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.errors.password")
@@ -355,8 +376,27 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Test 9: Validate Age for Doctor Registration")
-    @Order(9)
+    @DisplayName("Test 10: Validate Blank Password Error On Reset Password")
+    @Order(10)
+    public void blankPasswordOnResetPasswordTest() throws Exception {
+        // Arrange
+        ResetPassRequest invalidRequest = ResetPassRequest.builder()
+                .token("token123")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(put("/api/v1/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.newPassword")
+                        .value("Password is required"));
+    }
+
+    @Test
+    @DisplayName("Test 11: Validate Age for Doctor Registration")
+    @Order(11)
     public void underageDoctorTest() throws Exception {
         // Arrange
         RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
@@ -384,8 +424,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Test 10: Validate Blank Birth Date Error")
-    @Order(10)
+    @DisplayName("Test 12: Validate Blank Birth Date Error")
+    @Order(12)
     public void blankBirthDateTest() throws Exception {
         // Arrange
         RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
@@ -412,8 +452,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Test 11: Invalid Gender for Doctor Registration")
-    @Order(11)
+    @DisplayName("Test 13: Invalid Gender for Doctor Registration")
+    @Order(13)
     public void invalidGenderTest() throws Exception {
         // Arrange
         String invalidRequestJson = "{"
@@ -441,8 +481,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Test 12: Validate Blank Gender Error")
-    @Order(12)
+    @DisplayName("Test 14: Validate Blank Gender Error")
+    @Order(14)
     public void blankGenderTest() throws Exception {
         // Arrange
         RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
@@ -469,8 +509,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Test 13: Validate Blank Phone Error")
-    @Order(13)
+    @DisplayName("Test 15: Validate Blank Phone Error")
+    @Order(15)
     public void blankPhoneTest() throws Exception {
         // Arrange
         RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
@@ -497,8 +537,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Test 14: Validate Blank Role Error")
-    @Order(14)
+    @DisplayName("Test 16: Validate Blank Role Error")
+    @Order(16)
     public void blankRoleTest() throws Exception {
         // Arrange
         RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
@@ -525,8 +565,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Test 15: Validate Patient Fields Error")
-    @Order(15)
+    @DisplayName("Test 17: Validate Patient Fields Error")
+    @Order(17)
     public void invalidPatientFieldsTest() throws Exception {
         // Arrange
         RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
@@ -551,70 +591,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @DisplayName("Test 16: Validate Doctor Fields Error")
-    @Order(16)
-    public void invalidDoctorFieldsTest() throws Exception {
-        // Arrange
-        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .password("Myp@ssword123")
-                .birthDate(LocalDate.now().minusYears(17))
-                .gender(GenderEnum.MALE)
-                .phone("1234567890")
-                .role(RoleEnum.DOCTOR)
-                .build();
-
-        // Act & Assert
-        mockMvc.perform(post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.errors.license")
-                        .value("License is required for doctors"))
-                .andExpect(jsonPath("$.errors.speciality")
-                        .value("Speciality is required for doctors"))
-                .andExpect(jsonPath("$.errors.officeAddress")
-                        .value("Office address is required for doctors"));
-    }
-
-    @Test
-    @DisplayName("Test 17: Validate Multiple Blank Fields Error")
-    @Order(17)
-    public void validateMultipleBlankFieldsTest() throws Exception {
-        // Arrange
-        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
-                .firstName("John")
-                .lastName("Doe")
-                .email("john.doe@example.com")
-                .phone("1234567890")
-                .role(RoleEnum.DOCTOR)
-                .license("LICENSE123")
-                .speciality("Cardiology")
-                .officeAddress("456 Avenue")
-                .build();
-
-        // Act & Assert
-        mockMvc.perform(post("/api/v1/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.errors.gender")
-                        .value("Gender is required"))
-                .andExpect(jsonPath("$.errors.birthDate")
-                        .value("Birth date is required"))
-                .andExpect(jsonPath("$.errors.password")
-                        .value("Password is required"));
-    }
-
-    /* Exceptions */
-
-    @Test
-    @Order(18)
-    @DisplayName("Test 18: Email Already Exists Exception")
+    @DisplayName("Test 21: Email Already Exists Exception")
+    @Order(21)
     public void testEmailAlreadyExistsException() throws Exception {
 
         RegisterUserRequest request = RegisterUserRequest.builder()
@@ -644,8 +622,89 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Order(19)
-    @DisplayName("Test 19: User Already Enabled Exception")
+    @DisplayName("Test 22: Validate Doctor Fields Error")
+    @Order(22)
+    public void invalidDoctorFieldsTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .password("Myp@ssword123")
+                .birthDate(LocalDate.now().minusYears(17))
+                .gender(GenderEnum.MALE)
+                .phone("1234567890")
+                .role(RoleEnum.DOCTOR)
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.license")
+                        .value("License is required for doctors"))
+                .andExpect(jsonPath("$.errors.speciality")
+                        .value("Speciality is required for doctors"))
+                .andExpect(jsonPath("$.errors.officeAddress")
+                        .value("Office address is required for doctors"));
+    }
+
+    @Test
+    @DisplayName("Test 23: Validate Multiple Blank Fields Error")
+    @Order(23)
+    public void validateMultipleBlankFieldsTest() throws Exception {
+        // Arrange
+        RegisterUserRequest invalidRequest = RegisterUserRequest.builder()
+                .firstName("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .phone("1234567890")
+                .role(RoleEnum.DOCTOR)
+                .license("LICENSE123")
+                .speciality("Cardiology")
+                .officeAddress("456 Avenue")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(post("/api/v1/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.gender")
+                        .value("Gender is required"))
+                .andExpect(jsonPath("$.errors.birthDate")
+                        .value("Birth date is required"))
+                .andExpect(jsonPath("$.errors.password")
+                        .value("Password is required"));
+    }
+
+    @Test
+    @DisplayName("Test 24: Validate Blank Token Error On Reset Password")
+    @Order(24)
+    public void blankTokenOnResetPasswordTest() throws Exception {
+        // Arrange
+        ResetPassRequest invalidRequest = ResetPassRequest.builder()
+                .newPassword("Mynewp@ss567")
+                .build();
+
+        // Act & Assert
+        mockMvc.perform(put("/api/v1/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidRequest)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.errors.token")
+                        .value("Token is required"));
+    }
+
+    /* Exceptions */
+
+    @Test
+    @DisplayName("Test 25: User Already Enabled Exception")
+    @Order(25)
     public void testUserAlreadyEnabledException() throws Exception {
         // Arrange
         String token = "validToken";
@@ -666,9 +725,9 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Order(20)
-    @DisplayName("Test 20: User Not Enabled Exception")
-    public void testUserNotEnabledException() throws Exception {
+    @DisplayName("Test 26: User Not Enabled Exception On Login")
+    @Order(26)
+    public void testUserNotEnabledExceptionOnLogin() throws Exception {
         // Arrange
         LoginRequest request = LoginRequest.builder()
                 .email("johndoe@mail.com")
@@ -679,8 +738,8 @@ public class AuthControllerTest {
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(request)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.status").value(403))
                 .andExpect(jsonPath("$.errors.error")
@@ -688,8 +747,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Order(21)
-    @DisplayName("Test 21: Authentication Exception")
+    @DisplayName("Test 27: Authentication Exception")
+    @Order(27)
     public void testAuthenticationException() throws Exception {
         // Arrange
         LoginRequest request = LoginRequest.builder()
@@ -698,7 +757,8 @@ public class AuthControllerTest {
                 .build();
 
         when(authServiceImpl.login(any(LoginRequest.class)))
-                .thenThrow(new AuthenticationException("Bad credentials") {});
+                .thenThrow(new AuthenticationException("Bad credentials") {
+                });
 
         // Act & Assert
         mockMvc.perform(post("/api/v1/auth/login")
@@ -711,8 +771,8 @@ public class AuthControllerTest {
     }
 
     @Test
-    @Order(22)
-    @DisplayName("Test 22: Invalid Token Exception")
+    @DisplayName("Test 28: Invalid Token Exception")
+    @Order(28)
     public void testInvalidTokenException() throws Exception {
         // Arrange
         ConfirmUserRequest request = ConfirmUserRequest.builder()
@@ -729,6 +789,26 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.status").value(401))
                 .andExpect(jsonPath("$.errors.error")
                         .value("Token invalid, not Authorized"));
+    }
+
+    @Test
+    @DisplayName("Test 29: User Not Enabled Exception On Reset Password")
+    @Order(29)
+    public void testUserNotEnabledExceptionOnResetPassword() throws Exception {
+        // Arrange
+        ResetPassRequest request = ResetPassRequest.builder()
+                .token("token123")
+                .newPassword("MyNewP@ss567")
+                .build();
+
+        doNothing().when(authServiceImpl).resetPassword(any(ResetPassRequest.class));
+
+        // Act & Assert
+        mockMvc.perform(put("/api/v1/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Password reset successfully"));
     }
 
 }

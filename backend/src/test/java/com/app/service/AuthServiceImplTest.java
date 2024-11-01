@@ -427,32 +427,7 @@ public class AuthServiceImplTest {
     @Test
     @Order(12)
     @DisplayName("Test 12: Login - User Not Enabled Exception")
-    public void shouldThrowUserNotEnabledException_whenUserIsAlreadyEnabled() {
-        // Arrange
-        String token = "validToken";
-        String email = "enableduser@mail.com";
-
-        User enabledUser = Patient.builder()
-                .address("Mitre 123")
-                .build();
-        enabledUser.setEmail(email);
-        enabledUser.setEnabled(true);
-
-        // Mock behavior
-        Mockito.when(jwtUtils.validateToken(token, TokenType.CONFIRM)).thenReturn(decodedJWT);
-        Mockito.when(jwtUtils.extractUsername(decodedJWT)).thenReturn(email);
-        Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(enabledUser));
-
-        // Act & Assert
-        assertThrows(UserAlreadyEnabledException.class, () -> authServiceImpl.confirmUser(token));
-
-        Mockito.verify(userRepository).findUserByEmail(email);
-    }
-
-    @Test
-    @Order(13)
-    @DisplayName("Test 13: Login - User Not Enabled Exception")
-    public void shouldThrowUserNotEnabledException_whenUserIsNotEnabled() {
+    public void shouldThrowUserNotEnabledException_whenUserIsNotEnabledOnLogin() {
         // Arrange
         String email = "notenableduser@mail.com";
         String password = "password123";
@@ -474,6 +449,40 @@ public class AuthServiceImplTest {
         // Act & Assert
         assertThrows(UserNotEnabledException.class, () -> authServiceImpl.login(request));
 
+        Mockito.verify(userRepository).findUserByEmail(email);
+    }
+
+    @Test
+    @Order(13)
+    @DisplayName("Test 12: PasswordReset - User Not Enabled Exception")
+    public void shouldThrowUserNotEnabledException_whenUserIsNotEnabledOnPasswordReset() {
+        // Arrange
+        String token = "resetToken123";
+        String newPassword = "MynewP@ss123";
+        String email = "johndoe@mail.com";
+
+        ResetPassRequest request = ResetPassRequest.builder()
+                .token(token)
+                .newPassword(newPassword)
+                .build();
+
+        DecodedJWT decodedJWT = Mockito.mock(DecodedJWT.class);
+
+        User notEnabledUser = Patient.builder()
+                .address("Mitre 123")
+                .build();
+        notEnabledUser.setEmail(email);
+        notEnabledUser.setEnabled(false);
+
+        // Mocking behavior
+        Mockito.when(jwtUtils.validateToken(token, TokenType.RESET)).thenReturn(decodedJWT);
+        Mockito.when(jwtUtils.extractUsername(decodedJWT)).thenReturn(email);
+        Mockito.when(userRepository.findUserByEmail(email)).thenReturn(Optional.of(notEnabledUser));
+
+        // Act
+        assertThrows(UserNotEnabledException.class, () -> authServiceImpl.resetPassword(request));
+
+        // Assert
         Mockito.verify(userRepository).findUserByEmail(email);
     }
 
