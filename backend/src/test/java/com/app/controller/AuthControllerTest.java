@@ -204,7 +204,7 @@ public class AuthControllerTest {
 
         when(authServiceImpl.confirmUser(any(String.class))).thenReturn(patientResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/confirm")
+        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/auth/confirm-user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(confirmUserRequest))
                         .with(csrf()))
@@ -713,7 +713,7 @@ public class AuthControllerTest {
         when(authServiceImpl.confirmUser(token)).thenThrow(new UserAlreadyEnabledException());
 
         // Act & Assert
-        mockMvc.perform(put("/api/v1/auth/confirm")
+        mockMvc.perform(put("/api/v1/auth/confirm-user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isConflict())
@@ -782,7 +782,7 @@ public class AuthControllerTest {
         when(authServiceImpl.confirmUser(anyString())).thenThrow(new InvalidTokenException());
 
         // Act & Assert
-        mockMvc.perform(put("/api/v1/auth/confirm")
+        mockMvc.perform(put("/api/v1/auth/confirm-user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isUnauthorized())

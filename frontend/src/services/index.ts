@@ -13,7 +13,7 @@ const register = async (body: ServiceI["registerUser"]) =>
   api.post("/auth/register", body);
 
 const confirmUser = async (body: ServiceI["confirmUser"]) =>
-  api.put("/auth/confirm", body);
+  api.put("/auth/confirm-user", body);
 
 const login = async (body: ServiceI["loginUser"]) =>
   api.post("/auth/login", body);

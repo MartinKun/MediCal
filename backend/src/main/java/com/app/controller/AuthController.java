@@ -50,7 +50,7 @@ public class AuthController {
 
     }
 
-    @PutMapping("/confirm")
+    @PutMapping("/confirm-user")
     public ResponseEntity<UserRegistrationResponse> confirmUser(
             @RequestBody ConfirmUserRequest request
     ) {

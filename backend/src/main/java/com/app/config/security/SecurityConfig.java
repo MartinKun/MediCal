@@ -50,7 +50,7 @@ public class SecurityConfig {
 
                     // PUBLIC Endpoints
                     http.requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll();
-                    http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/confirm").permitAll();
+                    http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/confirm-user").permitAll();
                     http.requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll();
                     http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/forgot-password").permitAll();
                     http.requestMatchers(HttpMethod.PUT, "/api/v1/auth/reset-password").permitAll();
