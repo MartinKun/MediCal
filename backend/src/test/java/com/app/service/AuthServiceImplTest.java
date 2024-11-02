@@ -231,6 +231,13 @@ public class AuthServiceImplTest {
     public void shouldLoginUserSuccessfully_whenValidCredentialsIsProvidedTest() {
         // Arrange
         String token = "generatedJwtToken";
+        User mockUser = Patient.builder()
+                .address("Mitre 123")
+                .build();
+        mockUser.setEmail(loginRequest.getEmail());
+        mockUser.setEnabled(true);
+
+        Mockito.when(userRepository.findUserByEmail(loginRequest.getEmail())).thenReturn(Optional.of(mockUser));
 
         Mockito.when(authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
@@ -245,6 +252,8 @@ public class AuthServiceImplTest {
         assertNotNull(response);
         assertEquals(token, response.getToken());
 
+        // Verifica que se hayan llamado los métodos simulados
+        Mockito.verify(userRepository).findUserByEmail(loginRequest.getEmail());
         Mockito.verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
         Mockito.verify(jwtUtils).createAccessToken(authentication);
     }
@@ -363,6 +372,7 @@ public class AuthServiceImplTest {
                 .build();
         user.setEmail(email);
         user.setPassword("oldPasswordHashed");
+        user.setEnabled(true);
 
         // Mocking behavior
         Mockito.when(jwtUtils.validateToken(token, TokenType.RESET)).thenReturn(decodedJWT);
