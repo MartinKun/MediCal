@@ -2,6 +2,7 @@ package com.app.common.util;
 
 import com.app.common.enums.TokenType;
 import com.app.exception.InvalidTokenException;
+import com.app.persistence.entity.User;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -33,7 +34,9 @@ public class JwtUtils {
     public String createAccessToken(Authentication authentication) {
         Algorithm algorithm = getAccessTokenAlgorithm();
 
-        String username = authentication.getPrincipal().toString();
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
+
         return JWT.create()
                 .withSubject(username)
                 .withIssuedAt(new Date())
