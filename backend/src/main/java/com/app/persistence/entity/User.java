@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Set;
 
 @Setter
 @Getter
@@ -32,6 +33,9 @@ public abstract class User implements UserDetails {
     private String image;
 
     private boolean isEnabled;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Notification> notifications;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
