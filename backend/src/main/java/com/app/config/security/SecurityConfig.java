@@ -60,6 +60,8 @@ public class SecurityConfig {
                     http.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll();
 
                     // PRIVATE Endpoints
+                    http.requestMatchers(HttpMethod.GET, "/api/v1/appointments").authenticated();
+                    http.requestMatchers(HttpMethod.POST, "/api/v1/appointments").authenticated();
 
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils), BasicAuthenticationFilter.class)
