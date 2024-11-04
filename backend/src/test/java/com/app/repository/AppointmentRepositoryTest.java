@@ -1,10 +1,8 @@
 package com.app.repository;
 
-import com.app.controller.dto.enums.GenderEnum;
 import com.app.persistence.entity.Appointment;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
-import com.app.persistence.entity.User;
 import com.app.persistence.repository.AppointmentRepository;
 import com.app.persistence.repository.UserRepository;
 import org.junit.jupiter.api.*;
@@ -12,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
