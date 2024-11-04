@@ -13,17 +13,21 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
+    private final HandlerExceptionResolver handlerExceptionResolver;
 
     public JwtAuthenticationFilter(
-            JwtUtils jwtUtils
+            JwtUtils jwtUtils,
+            HandlerExceptionResolver handlerExceptionResolver
     ){
         this.jwtUtils = jwtUtils;
+        this.handlerExceptionResolver = handlerExceptionResolver;
     }
 
     @Override
@@ -54,8 +58,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.setContext(context);
 
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
+            handlerExceptionResolver.resolveException(request, response, null, e);
         }
 
         filterChain.doFilter(request, response);
