@@ -25,13 +25,22 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentResponse createAppointment(AppointmentRequest request, User user) {
-        if(user instanceof Patient)
+        if(!(user instanceof Doctor doctor))
             throw new UnauthorizedAppointmentCreationException();
 
-        Doctor doctor = (Doctor) user;
+        User foundUser = userRepository.findUserByEmail(request.getPatientEmail())
+                .orElseThrow(() -> new UserDoesNotExistException(
+                        String.format(
+                                "Patient with email %s does not exist",
+                                request.getPatientEmail())
+                        )
+                );
 
-        Patient patient = (Patient) userRepository.findUserByEmail(request.getPatientEmail())
-                .orElseThrow(() -> new UserDoesNotExistException("Patient does not exist"));
+        if(!(foundUser instanceof Patient patient))
+            throw new UnauthorizedAppointmentCreationException(String.format(
+                    "User with email %s is not a Patient",
+                    request.getPatientEmail())
+            );
 
         Appointment appointment = Appointment.builder()
                 .date(request.getDate())
@@ -40,6 +49,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .doctor(doctor)
                 .patient(patient)
                 .build();
+
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
         return AppointmentResponse.builder()
