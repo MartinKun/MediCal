@@ -66,100 +66,27 @@ public class AppointmentServiceImplTest {
                 .patient(patient)
                 .build();
 
-        appointmentRequest = AppointmentRequest.builder()
+        AppointmentRequest appointmentRequest = AppointmentRequest.builder()
                 .date(LocalDateTime.of(2024, 12, 4, 14, 30))
                 .reason("Evaluación cardiovascular de rutina para control y seguimiento médico.")
                 .address("Calle 13")
                 .patientEmail("matiasclauss@mail.com")
                 .build();
 
-        Mockito.when(userRepository.findUserByEmail("matiasclauss@mail.com")).thenReturn(Optional.of(patient));
         Mockito.when(appointmentRepository.save(any(Appointment.class))).thenReturn(appointment);
 
         // Act
-        AppointmentResponse response = appointmentService.createAppointment(appointmentRequest, doctor);
+        AppointmentResponse response = appointmentService.createAppointment(appointment);
 
         // Assert
-        assertEquals(LocalDateTime.of(2024, 12, 4, 14, 30), response.getDate());
-        assertEquals("Matías Clauss", response.getUserName());
+        assertEquals("2024-12-04T14:30:00", response.getDate());
+        assertEquals("Matías Clauss", response.getParticipant().getFullName());
         assertEquals("Calle 13", response.getAddress());
         assertEquals("Evaluación cardiovascular de rutina para control y seguimiento médico.", response.getReason());
-        assertEquals(null, response.getUserAvatar());
+        assertNull(response.getParticipant().getAvatar());
 
+        // Verify that the repository save method was called
         Mockito.verify(appointmentRepository).save(Mockito.any(Appointment.class));
-    }
-
-    @Test
-    @DisplayName("Test: Throw UnauthorizedAppointmentCreationException when User is not a Doctor")
-    public void shouldThrowUnauthorizedAppointmentCreationException_whenUserIsNotDoctor() {
-        // Arrange
-        User nonDoctorUser = Patient.builder()
-                .address("Mitre 123")
-                .build();
-        nonDoctorUser.setEmail("patient@mail.com");
-        AppointmentRequest request = AppointmentRequest.builder()
-                .patientEmail("patient@mail.com")
-                .build();
-
-        // Act & Assert
-        assertThrows(UnauthorizedAppointmentCreationException.class,
-                () -> appointmentService.createAppointment(request, nonDoctorUser));
-    }
-
-    @Test
-    @DisplayName("Test: Throw UserDoesNotExistException when Patient does not exist in repository")
-    public void shouldThrowUserDoesNotExistException_whenPatientDoesNotExist() {
-        // Arrange
-        Doctor doctor = Doctor.builder()
-                .officeAddress("Avenue 123")
-                .license("ABC12345")
-                .speciality("Cardiología")
-                .build();
-        doctor.setEmail("doctor@mail.com");
-        AppointmentRequest request = AppointmentRequest.builder()
-                .patientEmail("nonexistentpatient@mail.com")
-                .build();
-
-        Mockito.when(userRepository.findUserByEmail("nonexistentpatient@mail.com"))
-                .thenReturn(Optional.empty());
-
-        // Act & Assert
-        UserDoesNotExistException exception = assertThrows(UserDoesNotExistException.class,
-                () -> appointmentService.createAppointment(request, doctor));
-
-        assertEquals("Patient with email nonexistentpatient@mail.com does not exist", exception.getMessage());
-    }
-
-    @Test
-    @DisplayName("Test: Throw UnauthorizedAppointmentCreationException when Found User is not a Patient")
-    public void shouldThrowUnauthorizedAppointmentCreationException_whenFoundUserIsNotPatient() {
-        // Arrange
-        Doctor doctor = Doctor.builder()
-                .officeAddress("Avenue 123")
-                .license("ABC12345")
-                .speciality("Cardiología")
-                .build();
-        doctor.setEmail("doctor@mail.com");
-
-        User nonPatientUser = Doctor.builder()
-                .officeAddress("Street 321")
-                .license("UTC12345")
-                .speciality("Traumatología")
-                .build();
-        nonPatientUser.setEmail("user@mail.com");
-
-        AppointmentRequest request = AppointmentRequest.builder()
-                .patientEmail("user@mail.com")
-                .build();
-
-        Mockito.when(userRepository.findUserByEmail("user@mail.com"))
-                .thenReturn(Optional.of(nonPatientUser));
-
-        // Act & Assert
-        UnauthorizedAppointmentCreationException exception = assertThrows(UnauthorizedAppointmentCreationException.class,
-                () -> appointmentService.createAppointment(request, doctor));
-
-        assertEquals("User with email user@mail.com is not a Patient", exception.getMessage());
     }
 
 }
