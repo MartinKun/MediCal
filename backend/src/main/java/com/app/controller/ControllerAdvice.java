@@ -1,10 +1,7 @@
 package com.app.controller;
 
 import com.app.controller.dto.response.MessageResponse;
-import com.app.exception.ConflictException;
-import com.app.exception.ForbiddenException;
-import com.app.exception.NotFoundException;
-import com.app.exception.UnauthorizedException;
+import com.app.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -50,6 +47,19 @@ public class ControllerAdvice {
         return ResponseEntity.internalServerError()
                 .body(new MessageResponse(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        errorMap)
+                );
+    }
+
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<MessageResponse> throwBadRequestException(
+            Exception ex
+    ) {
+        Map<String, String> errorMap = new HashMap<>();
+        errorMap.put("error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponse(
+                        HttpStatus.BAD_REQUEST.value(),
                         errorMap)
                 );
     }
