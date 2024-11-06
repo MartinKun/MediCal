@@ -270,6 +270,7 @@ public class AuthServiceImplTest {
         User user = Patient.builder()
                 .address("Mitre 123")
                 .build();
+        user.setBirthDate(LocalDate.of(1990, 1, 1));
         user.setEmail(email);
         user.setEnabled(false);
 

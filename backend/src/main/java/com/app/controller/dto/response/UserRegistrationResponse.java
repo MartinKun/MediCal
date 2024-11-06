@@ -4,8 +4,6 @@ import com.app.controller.dto.enums.GenderEnum;
 import com.app.controller.dto.enums.RoleEnum;
 import lombok.*;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,7 +14,7 @@ public abstract class UserRegistrationResponse {
     private String lastName;
     private String email;
     private String password;
-    private LocalDate birthDate;
+    private String birthDate;
     private GenderEnum gender;
     private String phone;
     private RoleEnum role;

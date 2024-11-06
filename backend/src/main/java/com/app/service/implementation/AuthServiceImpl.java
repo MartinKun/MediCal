@@ -1,6 +1,7 @@
 package com.app.service.implementation;
 
 import com.app.common.enums.TokenType;
+import com.app.common.util.DateUtils;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.LoginRequest;
 import com.app.controller.dto.request.RegisterUserRequest;
@@ -187,7 +188,7 @@ public class AuthServiceImpl implements AuthService {
         response.setLastName(user.getLastName());
         response.setEmail(user.getEmail());
         response.setPassword(user.getPassword());
-        response.setBirthDate(user.getBirthDate());
+        response.setBirthDate(DateUtils.formatDate(user.getBirthDate()));
         response.setGender(user.getGender());
         response.setPhone(user.getPhone());
         response.setRole(
