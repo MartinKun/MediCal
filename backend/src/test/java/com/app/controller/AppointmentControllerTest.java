@@ -16,9 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
 
@@ -48,10 +50,14 @@ class AppointmentControllerTest {
 
     private final String username = "testUser@mail.com"; // The username replaces the @AuthenticationPrincipal parameter from CustomUsernameArgumentResolver.java with a predefined value for the test.
 
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(appointmentController)
                 .setCustomArgumentResolvers(new CustomUsernameArgumentResolver())
+                .setControllerAdvice(new ControllerAdvice())
                 .build();
     }
 
@@ -102,5 +108,59 @@ class AppointmentControllerTest {
                 .andExpect(jsonPath("$.date").value("2024-12-04T14:30:00"))
                 .andExpect(jsonPath("$.address").value("Calle 13"))
                 .andExpect(jsonPath("$.reason").value("Evaluación cardiovascular de rutina para control y seguimiento médico."));
+    }
+
+    @Test
+    @DisplayName("Test: Should return UnauthorizedAppointmentCreationException when a non-doctor tries to create an appointment")
+    void shouldReturnUnauthorized_WhenNonDoctorTriesToCreateAppointment() throws Exception {
+        // Arrange
+        Patient patientUser = new Patient();
+        patientUser.setEmail(username);
+        when(userDetailService.loadUserByUsername(any(String.class))).thenReturn(patientUser);
+
+        AppointmentRequest request = AppointmentRequest.builder()
+                .date(LocalDateTime.of(2024, 12, 4, 14, 30))
+                .reason("Evaluación cardiovascular de rutina para control y seguimiento médico.")
+                .address("Calle 13")
+                .patientEmail("matiasclauss@mail.com")
+                .build();
+
+        // Act & Assert
+        this.mockMvc.perform(post("/api/v1/appointments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+                .andExpect(jsonPath("$.errors.error").value("Only doctors can create appointments."));
+    }
+
+    @Test
+    @DisplayName("Test: Should return Unauthorized when the patient email is not associated with a patient")
+    void shouldReturnUnauthorized_WhenPatientEmailIsNotForPatient() throws Exception {
+        // Arrange
+        Doctor myUser = new Doctor();
+        myUser.setEmail(username);
+        when(userDetailService.loadUserByUsername(username)).thenReturn(myUser);
+
+        Doctor nonPatientUser = new Doctor();
+        nonPatientUser.setEmail("matiasclauss@mail.com");
+        when(userDetailService.loadUserByUsername("matiasclauss@mail.com")).thenReturn(nonPatientUser);
+
+        AppointmentRequest request = AppointmentRequest.builder()
+                .date(LocalDateTime.of(2024, 12, 4, 14, 30))
+                .reason("Evaluación cardiovascular de rutina para control y seguimiento médico.")
+                .address("Calle 13")
+                .patientEmail("matiasclauss@mail.com")
+                .build();
+
+        // Act & Assert
+        this.mockMvc.perform(post("/api/v1/appointments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(print())
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.status").value(HttpStatus.FORBIDDEN.value()))
+                .andExpect(jsonPath("$.errors.error").value("User with email matiasclauss@mail.com is not a Patient"));
     }
 }

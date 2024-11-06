@@ -2,12 +2,9 @@ package com.app.service;
 
 import com.app.controller.dto.request.AppointmentRequest;
 import com.app.controller.dto.response.AppointmentResponse;
-import com.app.exception.UnauthorizedAppointmentCreationException;
-import com.app.exception.UserDoesNotExistException;
 import com.app.persistence.entity.Appointment;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
-import com.app.persistence.entity.User;
 import com.app.persistence.repository.AppointmentRepository;
 import com.app.persistence.repository.UserRepository;
 import com.app.service.implementation.AppointmentServiceImpl;
@@ -20,7 +17,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
