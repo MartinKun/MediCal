@@ -1,5 +1,6 @@
 package com.app.controller;
 
+import com.app.common.util.DateUtils;
 import com.app.controller.dto.enums.GenderEnum;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.request.*;
@@ -23,7 +24,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
@@ -53,18 +53,21 @@ public class AuthControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
     private RegisterUserRequest patientRequest;
     private RegisterUserRequest doctorRequest;
 
     @MockBean
     private RegisterUserRequestValidator registerUserRequestValidator;
 
+    @Autowired
+    private AuthController authController;
+
     @BeforeEach
     public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        //mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(authController)
+                .setControllerAdvice(new ControllerAdvice())
+                .build();
 
         patientRequest = new RegisterUserRequest();
         patientRequest.setFirstName("John");
@@ -108,7 +111,7 @@ public class AuthControllerTest {
         patientResponse.setLastName("Doe");
         patientResponse.setEmail("johndoe@mail.com");
         patientResponse.setPassword("MyPassw@rd123");
-        patientResponse.setBirthDate(LocalDate.of(1990, 1, 1));
+        patientResponse.setBirthDate(DateUtils.formatDate(LocalDate.of(1990, 1, 1)));
         patientResponse.setGender(GenderEnum.MALE);
         patientResponse.setPhone("123456");
         patientResponse.setRole(RoleEnum.PATIENT);
@@ -149,7 +152,7 @@ public class AuthControllerTest {
         doctorResponse.setLastName("Smith");
         doctorResponse.setEmail("janesmith@mail.com");
         doctorResponse.setPassword("MyPassw@rd123");
-        doctorResponse.setBirthDate(LocalDate.of(1990, 1, 1));
+        doctorResponse.setBirthDate(DateUtils.formatDate(LocalDate.of(1990, 1, 1)));
         doctorResponse.setGender(GenderEnum.FEMALE);
         doctorResponse.setPhone("123456");
         doctorResponse.setRole(RoleEnum.DOCTOR);
@@ -196,7 +199,7 @@ public class AuthControllerTest {
         patientResponse.setLastName("Doe");
         patientResponse.setEmail("johndoe@mail.com");
         patientResponse.setPassword("MyPassw@rd123");
-        patientResponse.setBirthDate(LocalDate.of(1990, 1, 1));
+        patientResponse.setBirthDate(DateUtils.formatDate(LocalDate.of(1990, 1, 1)));
         patientResponse.setGender(GenderEnum.MALE);
         patientResponse.setPhone("123456");
         patientResponse.setRole(RoleEnum.PATIENT);
