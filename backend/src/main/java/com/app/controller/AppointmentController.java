@@ -15,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/v1/appointments")
 public class AppointmentController {
@@ -25,18 +27,31 @@ public class AppointmentController {
     @Autowired
     AppointmentServiceImpl appointmentService;
 
+    @GetMapping
+    public ResponseEntity<Set<AppointmentResponse>> listAppointmentByMonth(
+            @AuthenticationPrincipal String username,
+            @RequestParam int month,
+            @RequestParam int year
+    ) {
+        User myUser = (User) userDetailService.loadUserByUsername(username);
+
+        Set<AppointmentResponse> appointments = appointmentService.listAppointmentsByUserAndMonth(myUser, month, year);
+
+        return ResponseEntity.ok(appointments);
+    }
+
     @PostMapping
     public ResponseEntity<AppointmentResponse> createAppointment(
             @AuthenticationPrincipal String username,
             @RequestBody AppointmentRequest request
-    ){
+    ) {
         User myUser = (User) userDetailService.loadUserByUsername(username);
         User myPatient = (User) userDetailService.loadUserByUsername(request.getPatientEmail());
 
-        if(!(myUser instanceof Doctor doctor))
+        if (!(myUser instanceof Doctor doctor))
             throw new UnauthorizedAppointmentCreationException("Only doctors can create appointments.");
 
-        if (!(myPatient instanceof Patient patient)) 
+        if (!(myPatient instanceof Patient patient))
             throw new UnauthorizedAppointmentCreationException(
                     String.format("User with email %s is not a Patient", request.getPatientEmail()));
 
@@ -53,7 +68,6 @@ public class AppointmentController {
 
         return ResponseEntity.ok(response);
     }
-
 
 
 }
