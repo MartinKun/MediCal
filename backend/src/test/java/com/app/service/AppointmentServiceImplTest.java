@@ -17,9 +17,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class AppointmentServiceImplTest {
@@ -69,7 +72,7 @@ public class AppointmentServiceImplTest {
                 .patientEmail("matiasclauss@mail.com")
                 .build();
 
-        Mockito.when(appointmentRepository.save(any(Appointment.class))).thenReturn(appointment);
+        when(appointmentRepository.save(any(Appointment.class))).thenReturn(appointment);
 
         // Act
         AppointmentResponse response = appointmentService.createAppointment(appointment);
@@ -82,7 +85,133 @@ public class AppointmentServiceImplTest {
         assertNull(response.getParticipant().getAvatar());
 
         // Verify that the repository save method was called
-        Mockito.verify(appointmentRepository).save(Mockito.any(Appointment.class));
+        verify(appointmentRepository).save(Mockito.any(Appointment.class));
+    }
+
+    @Test
+    @DisplayName("Test: Should return Appointments for a given Patient")
+    public void shouldReturnAppointmentsForPatient() {
+        // Arrange
+        Patient patient = new Patient();
+        patient.setId(1L);
+        patient.setFirstName("John");
+        patient.setLastName("Doe");
+
+        Doctor doctor = new Doctor();
+        doctor.setFirstName("Dr.");
+        doctor.setLastName("Smith");
+
+        Appointment appointment = Appointment.builder()
+                .id(1L)
+                .date(LocalDateTime.of(2024, 12, 4, 14, 30))
+                .reason("Consulta general")
+                .address("Consultorio 1")
+                .patient(patient)
+                .doctor(doctor)
+                .build();
+
+        Set<Appointment> appointments = Set.of(appointment);
+
+        when(appointmentRepository.findAppointmentsByPatientAndMonth(eq(patient.getId()), anyInt(), anyInt()))
+                .thenReturn(appointments);
+
+        // Act
+        Set<AppointmentResponse> response = appointmentService.listAppointmentsByUserAndMonth(patient, 12, 2024);
+
+        // Assert
+        assertEquals(1, response.size());
+        AppointmentResponse appointmentResponse = response.iterator().next();
+        assertEquals(1L, appointmentResponse.getId());
+        assertEquals("Consulta general", appointmentResponse.getReason());
+        assertEquals("Consultorio 1", appointmentResponse.getAddress());
+        assertEquals("2024-12-04T14:30:00", appointmentResponse.getDate());
+        assertEquals("Dr. Smith", appointmentResponse.getParticipant().getFullName());
+
+        // Verify
+        verify(appointmentRepository).findAppointmentsByPatientAndMonth(eq(patient.getId()), eq(12), eq(2024));
+    }
+
+    @Test
+    @DisplayName("Test: Should return Appointments for a given Doctor")
+    public void shouldReturnAppointmentsForDoctor() {
+        // Arrange
+        Doctor doctor = new Doctor();
+        doctor.setId(2L);
+        doctor.setFirstName("Dr.");
+        doctor.setLastName("House");
+
+        Patient patient = new Patient();
+        patient.setFirstName("Alice");
+        patient.setLastName("Johnson");
+
+        Appointment appointment = Appointment.builder()
+                .id(2L)
+                .date(LocalDateTime.of(2024, 12, 5, 10, 0))
+                .reason("Control de rutina")
+                .address("Hospital Central")
+                .doctor(doctor)
+                .patient(patient)
+                .build();
+
+        Set<Appointment> appointments = Set.of(appointment);
+
+        when(appointmentRepository.findAppointmentsByDoctorAndMonth(eq(doctor.getId()), anyInt(), anyInt()))
+                .thenReturn(appointments);
+
+        // Act
+        Set<AppointmentResponse> response = appointmentService.listAppointmentsByUserAndMonth(doctor, 12, 2024);
+
+        // Assert
+        assertEquals(1, response.size());
+        AppointmentResponse appointmentResponse = response.iterator().next();
+        assertEquals(2L, appointmentResponse.getId());
+        assertEquals("Control de rutina", appointmentResponse.getReason());
+        assertEquals("Hospital Central", appointmentResponse.getAddress());
+        assertEquals("2024-12-05T10:00:00", appointmentResponse.getDate());
+        assertEquals("Alice Johnson", appointmentResponse.getParticipant().getFullName());
+
+        // Verify
+        verify(appointmentRepository).findAppointmentsByDoctorAndMonth(eq(doctor.getId()), eq(12), eq(2024));
+    }
+
+    @Test
+    @DisplayName("Test: Should return an empty set when no appointments found for Patient")
+    public void shouldReturnEmptySet_WhenNoAppointmentsForPatient() {
+        // Arrange
+        Patient patient = new Patient();
+        patient.setId(3L);
+
+        when(appointmentRepository.findAppointmentsByPatientAndMonth(eq(patient.getId()), anyInt(), anyInt()))
+                .thenReturn(Set.of());
+
+        // Act
+        Set<AppointmentResponse> response = appointmentService.listAppointmentsByUserAndMonth(patient, 1, 2023);
+
+        // Assert
+        assertEquals(0, response.size());
+
+        // Verify
+        verify(appointmentRepository).findAppointmentsByPatientAndMonth(eq(patient.getId()), eq(1), eq(2023));
+    }
+
+    @Test
+    @DisplayName("Test: Should return an empty set when no appointments found for Doctor")
+    public void shouldReturnEmptySet_WhenNoAppointmentsForDoctor() {
+        // Arrange
+        Doctor doctor = new Doctor();
+        doctor.setId(4L);
+
+        when(appointmentRepository.findAppointmentsByDoctorAndMonth(eq(doctor.getId()), anyInt(), anyInt()))
+                .thenReturn(Set.of());
+
+        // Act
+        Set<AppointmentResponse> response = appointmentService.listAppointmentsByUserAndMonth(doctor, 2, 2022);
+
+        // Assert
+        assertEquals(0, response.size());
+
+        // Verify
+        verify(appointmentRepository).findAppointmentsByDoctorAndMonth(eq(doctor.getId()), eq(2), eq(2022));
     }
 
 }

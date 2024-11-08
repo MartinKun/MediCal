@@ -64,7 +64,6 @@ public class AuthControllerTest {
 
     @BeforeEach
     public void setup() {
-        //mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         mockMvc = MockMvcBuilders.standaloneSetup(authController)
                 .setControllerAdvice(new ControllerAdvice())
                 .build();

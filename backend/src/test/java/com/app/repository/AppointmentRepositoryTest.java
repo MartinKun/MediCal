@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,6 +70,70 @@ public class AppointmentRepositoryTest {
         assertEquals("Avenue 123", savedAppointment.getDoctor().getOfficeAddress());
         assertEquals("ABC12345", savedAppointment.getDoctor().getLicense());
         assertEquals("Cardiología", savedAppointment.getDoctor().getSpeciality());
+    }
+
+    @Test
+    @DisplayName("Test: Find appointments by doctor and month")
+    @Rollback(value = false)
+    public void findAppointmentsByDoctorAndMonth() {
+        // Arrange
+        Appointment appointment1 = Appointment.builder()
+                .date(LocalDateTime.of(2024, 12, 4, 14, 30))
+                .reason("Evaluación cardiovascular de rutina para control y seguimiento médico.")
+                .address("Calle 13")
+                .doctor(savedDoctor)
+                .patient(savedPatient)
+                .build();
+
+        Appointment appointment2 = Appointment.builder()
+                .date(LocalDateTime.of(2024, 12, 15, 10, 30))
+                .reason("Chequeo de rutina.")
+                .address("Calle 14")
+                .doctor(savedDoctor)
+                .patient(savedPatient)
+                .build();
+
+        appointmentRepository.save(appointment1);
+        appointmentRepository.save(appointment2);
+
+        // Act
+        Set<Appointment> appointments = appointmentRepository.findAppointmentsByDoctorAndMonth(savedDoctor.getId(), 12, 2024);
+
+        // Assert
+        assertNotNull(appointments);
+        assertEquals(2, appointments.size()); // Ensure two appointments are found for the doctor in December 2024
+    }
+
+    @Test
+    @DisplayName("Test: Find appointments by patient and month")
+    @Rollback(value = false)
+    public void findAppointmentsByPatientAndMonth() {
+        // Arrange
+        Appointment appointment1 = Appointment.builder()
+                .date(LocalDateTime.of(2024, 12, 4, 14, 30))
+                .reason("Evaluación cardiovascular de rutina para control y seguimiento médico.")
+                .address("Calle 13")
+                .doctor(savedDoctor)
+                .patient(savedPatient)
+                .build();
+
+        Appointment appointment2 = Appointment.builder()
+                .date(LocalDateTime.of(2024, 12, 15, 10, 30))
+                .reason("Chequeo de rutina.")
+                .address("Calle 14")
+                .doctor(savedDoctor)
+                .patient(savedPatient)
+                .build();
+
+        appointmentRepository.save(appointment1);
+        appointmentRepository.save(appointment2);
+
+        // Act
+        Set<Appointment> appointments = appointmentRepository.findAppointmentsByPatientAndMonth(savedPatient.getId(), 12, 2024);
+
+        // Assert
+        assertNotNull(appointments);
+        assertEquals(2, appointments.size()); // Ensure two appointments are found for the patient in December 2024
     }
 
 }
