@@ -3,6 +3,8 @@ package com.app.controller;
 
 import com.app.controller.dto.request.AppointmentRequest;
 import com.app.controller.dto.response.AppointmentResponse;
+import com.app.exception.InvalidMonthException;
+import com.app.exception.InvalidYearException;
 import com.app.exception.UnauthorizedAppointmentCreationException;
 import com.app.persistence.entity.Appointment;
 import com.app.persistence.entity.Doctor;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @RestController
@@ -33,6 +36,14 @@ public class AppointmentController {
             @RequestParam int month,
             @RequestParam int year
     ) {
+        if (month < 1 || month > 12)
+            throw new InvalidMonthException();
+
+        int currentYear = LocalDateTime.now().getYear();
+        if (year < 2000 || year > currentYear + 10)
+            throw new InvalidYearException(
+                    String.format("Invalid year. Please provide a value between 2000 and %d.", currentYear + 10));
+
         User myUser = (User) userDetailService.loadUserByUsername(username);
 
         Set<AppointmentResponse> appointments = appointmentService.listAppointmentsByUserAndMonth(myUser, month, year);
