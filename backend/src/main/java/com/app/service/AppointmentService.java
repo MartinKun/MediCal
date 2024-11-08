@@ -12,4 +12,8 @@ public interface AppointmentService {
 
     AppointmentResponse createAppointment(Appointment appointment);
 
+    Appointment getAppointmentById(Long id);
+
+    void deleteAppointment(Appointment appointment);
+
 }

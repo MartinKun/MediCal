@@ -42,7 +42,7 @@ public class SecurityConfig {
                     CorsConfigurationSource source = request -> {
                         CorsConfiguration configuration = new CorsConfiguration();
                         configuration.setAllowedOrigins(List.of("http://localhost:3000"));
-                        configuration.setAllowedMethods(List.of("GET", "POST", "PUT"));
+                        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
                         configuration.setAllowedHeaders(List.of("*"));
                         configuration.setAllowCredentials(true);
                         return configuration;
@@ -66,6 +66,7 @@ public class SecurityConfig {
                     // PRIVATE Endpoints
                     http.requestMatchers(HttpMethod.GET, "/api/v1/appointments").authenticated();
                     http.requestMatchers(HttpMethod.POST, "/api/v1/appointments").authenticated();
+                    http.requestMatchers(HttpMethod.DELETE, "/api/v1/appointments/{id}").authenticated();
 
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils, handlerExceptionResolver), BasicAuthenticationFilter.class)

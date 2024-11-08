@@ -3,6 +3,7 @@ package com.app.controller;
 
 import com.app.controller.dto.request.AppointmentRequest;
 import com.app.controller.dto.response.AppointmentResponse;
+import com.app.exception.AppointmentAccessDeniedException;
 import com.app.exception.InvalidMonthException;
 import com.app.exception.InvalidYearException;
 import com.app.exception.UnauthorizedAppointmentCreationException;
@@ -80,5 +81,21 @@ public class AppointmentController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteAppointmentById(
+            @AuthenticationPrincipal String username,
+            @PathVariable Long id
+    ) {
+
+        Appointment appointment = appointmentService.getAppointmentById(id);
+
+        if(!appointment.getDoctor().getEmail().equals(username)
+        && !appointment.getPatient().getEmail().equals(username))
+            throw new AppointmentAccessDeniedException();
+
+        appointmentService.deleteAppointment(appointment);
+
+        return ResponseEntity.ok("Appointment was deleted successfully.");
+    }
 
 }

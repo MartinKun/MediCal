@@ -3,6 +3,7 @@ package com.app.service.implementation;
 import com.app.common.util.DateUtils;
 import com.app.controller.dto.enums.RoleEnum;
 import com.app.controller.dto.response.AppointmentResponse;
+import com.app.exception.AppointmentNotFoundException;
 import com.app.persistence.entity.Appointment;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
@@ -47,6 +48,19 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment savedAppointment = appointmentRepository.save(appointment);
 
         return buildAppointmentResponse(savedAppointment, Patient.class);
+    }
+
+    @Override
+    public Appointment getAppointmentById(Long id) {
+        return appointmentRepository.findById(id)
+                .orElseThrow(() -> new AppointmentNotFoundException(
+                        String.format("Appointment with ID %d does not exist.",id)
+                ));
+    }
+
+    @Override
+    public void deleteAppointment(Appointment appointment) {
+        appointmentRepository.delete(appointment);
     }
 
     private AppointmentResponse buildAppointmentResponse(
