@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.Rollback;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -134,6 +135,35 @@ public class AppointmentRepositoryTest {
         // Assert
         assertNotNull(appointments);
         assertEquals(2, appointments.size()); // Ensure two appointments are found for the patient in December 2024
+    }
+
+    @Test
+    @DisplayName("Test: Delete appointment by ID")
+    @Rollback(value = false)
+    public void deleteAppointment() {
+        // Arrange
+        Appointment appointmentToDelete = Appointment.builder()
+                .date(LocalDateTime.of(2024, 11, 20, 9, 0))
+                .reason("Consulta para eliminar")
+                .address("Calle 20")
+                .doctor(savedDoctor)
+                .patient(savedPatient)
+                .build();
+
+        appointmentRepository.save(appointmentToDelete);
+
+        // Act
+        Long appointmentId = appointmentToDelete.getId();
+        assertNotNull(appointmentId);
+
+        Optional<Appointment> existingAppointment = appointmentRepository.findById(appointmentId);
+        assertTrue(existingAppointment.isPresent());
+
+        appointmentRepository.delete(appointmentToDelete);
+
+        // Assert
+        Optional<Appointment> deletedAppointment = appointmentRepository.findById(appointmentId);
+        assertTrue(deletedAppointment.isEmpty());
     }
 
 }

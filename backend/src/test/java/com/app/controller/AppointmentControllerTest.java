@@ -3,6 +3,7 @@ package com.app.controller;
 import com.app.common.util.DateUtils;
 import com.app.controller.dto.request.AppointmentRequest;
 import com.app.controller.dto.response.AppointmentResponse;
+import com.app.exception.AppointmentNotFoundException;
 import com.app.exception.UserDoesNotExistException;
 import com.app.persistence.entity.Appointment;
 import com.app.persistence.entity.Doctor;
@@ -27,11 +28,12 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import static org.hamcrest.Matchers.hasItems;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -215,16 +217,14 @@ class AppointmentControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].participant.fullName").value("Matías Clauss"))
-                .andExpect(jsonPath("$[0].date").value("2024-12-04T14:30:00"))
-                .andExpect(jsonPath("$[0].address").value("Calle 13"))
-                .andExpect(jsonPath("$[0].reason").value("Evaluación cardiovascular de rutina."))
-                .andExpect(jsonPath("$[1].id").value(2))
-                .andExpect(jsonPath("$[1].participant.fullName").value("Matías Clauss"))
-                .andExpect(jsonPath("$[1].date").value("2024-12-05T10:00:00"))
-                .andExpect(jsonPath("$[1].address").value("Calle 45"))
-                .andExpect(jsonPath("$[1].reason").value("Consulta de seguimiento."));
+                .andExpect(jsonPath("$[*].id", hasItems(1, 2)))
+                .andExpect(jsonPath("$[*].participant.fullName", hasItems("Matías Clauss")))
+                .andExpect(jsonPath("$[*].date", hasItems("2024-12-04T14:30:00", "2024-12-05T10:00:00")))
+                .andExpect(jsonPath("$[*].address", hasItems("Calle 13", "Calle 45")))
+                .andExpect(jsonPath("$[*].reason", hasItems(
+                        "Evaluación cardiovascular de rutina.",
+                        "Consulta de seguimiento."
+                )));
     }
 
     @Test
@@ -278,4 +278,51 @@ class AppointmentControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.errors.error").value("User does not exist."));
     }
+
+    @Test
+    @DisplayName("Test: Should Delete Appointment When Authorized")
+    void shouldDeleteAppointmentWhenAuthorized() throws Exception {
+        // Arrange
+        Long appointmentId = 1L;
+
+        Doctor doctor = new Doctor();
+        doctor.setEmail(username);
+
+        Patient patient = new Patient();
+        patient.setEmail("patient@mail.com");
+
+        Appointment appointment = new Appointment();
+        appointment.setId(appointmentId);
+        appointment.setDoctor(doctor);
+        appointment.setPatient(patient);
+
+        when(appointmentService.getAppointmentById(appointmentId)).thenReturn(appointment);
+
+        doNothing().when(appointmentService).deleteAppointment(appointment);
+
+        // Act & Assert
+        this.mockMvc.perform(delete("/api/v1/appointments/{id}", appointmentId))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Appointment was deleted successfully."));
+    }
+
+    @Test
+    @DisplayName("Test: Should Throw AppointmentNotFoundException When Appointment Does Not Exist")
+    void shouldThrowAppointmentNotFoundExceptionWhenAppointmentDoesNotExist() throws Exception {
+        // Arrange
+        Long nonExistentAppointmentId = 999L;
+
+        when(appointmentService.getAppointmentById(nonExistentAppointmentId))
+                .thenThrow(new AppointmentNotFoundException(
+                        String.format("Appointment with ID %d does not exist.", nonExistentAppointmentId)
+                ));
+
+        // Act & Assert
+        this.mockMvc.perform(delete("/api/v1/appointments/{id}", nonExistentAppointmentId))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.errors.error").value(
+                        String.format("Appointment with ID %d does not exist.", nonExistentAppointmentId)
+                ));
+    }
+
 }

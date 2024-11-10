@@ -2,6 +2,7 @@ package com.app.service;
 
 import com.app.controller.dto.request.AppointmentRequest;
 import com.app.controller.dto.response.AppointmentResponse;
+import com.app.exception.AppointmentNotFoundException;
 import com.app.persistence.entity.Appointment;
 import com.app.persistence.entity.Doctor;
 import com.app.persistence.entity.Patient;
@@ -17,12 +18,12 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AppointmentServiceImplTest {
@@ -212,6 +213,65 @@ public class AppointmentServiceImplTest {
 
         // Verify
         verify(appointmentRepository).findAppointmentsByDoctorAndMonth(eq(doctor.getId()), eq(2), eq(2022));
+    }
+
+    @Test
+    @DisplayName("Test: Should return Appointment by ID")
+    public void shouldReturnAppointmentById() {
+        // Arrange
+        Long appointmentId = 1L;
+        Appointment appointment = Appointment.builder()
+                .id(appointmentId)
+                .reason("Consulta de control")
+                .build();
+
+        when(appointmentRepository.findById(appointmentId)).thenReturn(Optional.of(appointment));
+
+        // Act
+        Appointment foundAppointment = appointmentService.getAppointmentById(appointmentId);
+
+        // Assert
+        assertNotNull(foundAppointment);
+        assertEquals(appointmentId, foundAppointment.getId());
+        assertEquals("Consulta de control", foundAppointment.getReason());
+
+        // Verify
+        verify(appointmentRepository).findById(appointmentId);
+    }
+
+    @Test
+    @DisplayName("Test: Should throw AppointmentNotFoundException when Appointment not found")
+    public void shouldThrowExceptionWhenAppointmentNotFound() {
+        // Arrange
+        Long nonExistentAppointmentId = 999L;
+        when(appointmentRepository.findById(nonExistentAppointmentId)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(AppointmentNotFoundException.class, () -> {
+            appointmentService.getAppointmentById(nonExistentAppointmentId);
+        });
+
+        // Verify
+        verify(appointmentRepository).findById(nonExistentAppointmentId);
+    }
+
+    @Test
+    @DisplayName("Test: Should delete Appointment by ID")
+    public void shouldDeleteAppointment() {
+        // Arrange
+        Long appointmentId = 1L;
+        Appointment appointment = Appointment.builder()
+                .id(appointmentId)
+                .reason("Consulta para eliminar")
+                .build();
+
+        doNothing().when(appointmentRepository).delete(appointment);
+
+        // Act
+        appointmentService.deleteAppointment(appointment);
+
+        // Verify
+        verify(appointmentRepository, times(1)).delete(appointment);
     }
 
 }
