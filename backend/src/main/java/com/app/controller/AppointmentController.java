@@ -91,7 +91,7 @@ public class AppointmentController {
 
         if(!appointment.getDoctor().getEmail().equals(username)
         && !appointment.getPatient().getEmail().equals(username))
-            throw new AppointmentAccessDeniedException();
+            throw new AppointmentAccessDeniedException("You do not have permission to delete this appointment.");
 
         appointmentService.deleteAppointment(appointment);
 
