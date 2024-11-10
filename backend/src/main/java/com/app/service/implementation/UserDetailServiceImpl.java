@@ -25,4 +25,12 @@ public class UserDetailServiceImpl implements UserDetailsService {
             throw new UserDoesNotExistException();
         return user.get();
     }
+
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new UserDoesNotExistException(
+                        String.format("User with ID %d does not exist.",id)
+                )
+        );
+    }
 }

@@ -1,9 +1,10 @@
 package com.app.persistence.entity;
 
+import com.app.common.enums.NotificationType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,8 +17,8 @@ public class Notification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private LocalDate date;
-    private String type;
+    private LocalDateTime date;
+    private NotificationType type;
     private String content;
     private boolean isRead;
 

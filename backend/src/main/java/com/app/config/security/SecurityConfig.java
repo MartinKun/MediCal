@@ -67,6 +67,10 @@ public class SecurityConfig {
                     http.requestMatchers(HttpMethod.GET, "/api/v1/appointments").authenticated();
                     http.requestMatchers(HttpMethod.POST, "/api/v1/appointments").authenticated();
                     http.requestMatchers(HttpMethod.DELETE, "/api/v1/appointments/{id}").authenticated();
+                    http.requestMatchers(HttpMethod.GET, "/api/v1/notifications").authenticated();
+                    http.requestMatchers(HttpMethod.POST, "/api/v1/notifications").authenticated();
+                    http.requestMatchers(HttpMethod.PUT, "/api/v1/notifications/{id}").authenticated();
+                    http.requestMatchers(HttpMethod.DELETE, "/api/v1/notifications/{id}").authenticated();
 
                 })
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils, handlerExceptionResolver), BasicAuthenticationFilter.class)
