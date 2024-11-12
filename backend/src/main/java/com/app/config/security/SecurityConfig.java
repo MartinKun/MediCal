@@ -64,6 +64,9 @@ public class SecurityConfig {
                     http.requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll();
 
                     // PRIVATE Endpoints
+                    http.requestMatchers(HttpMethod.GET, "/api/v1/user").authenticated();
+                    http.requestMatchers(HttpMethod.PUT, "/api/v1/user").authenticated();
+                    http.requestMatchers(HttpMethod.DELETE, "/api/v1/user").authenticated();
                     http.requestMatchers(HttpMethod.GET, "/api/v1/appointments").authenticated();
                     http.requestMatchers(HttpMethod.POST, "/api/v1/appointments").authenticated();
                     http.requestMatchers(HttpMethod.DELETE, "/api/v1/appointments/{id}").authenticated();
