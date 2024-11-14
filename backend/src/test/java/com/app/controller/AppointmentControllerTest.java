@@ -1,8 +1,10 @@
 package com.app.controller;
 
+import com.app.common.enums.NotificationType;
 import com.app.common.util.DateUtils;
 import com.app.controller.dto.request.AppointmentRequest;
 import com.app.controller.dto.response.AppointmentResponse;
+import com.app.controller.dto.response.NotificationResponse;
 import com.app.exception.AppointmentNotFoundException;
 import com.app.exception.UserDoesNotExistException;
 import com.app.persistence.entity.Appointment;
@@ -19,13 +21,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.hasItems;
@@ -57,9 +62,6 @@ class AppointmentControllerTest {
 
     private final String username = "testUser@mail.com"; // The username replaces the @AuthenticationPrincipal parameter from CustomUsernameArgumentResolver.java with a predefined value for the test.
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(appointmentController)
@@ -69,8 +71,8 @@ class AppointmentControllerTest {
     }
 
     @Test
-    @DisplayName("Test: Successful Appointment Creation")
-    void createAppointmentTest() throws Exception {
+    @DisplayName("Test: Successfully create an appointment with valid data")
+    void shouldCreateAppointmentSuccessfully_whenValidDataIsProvided() throws Exception {
         // Arrange
         Doctor myUser = new Doctor();
         myUser.setEmail(username);

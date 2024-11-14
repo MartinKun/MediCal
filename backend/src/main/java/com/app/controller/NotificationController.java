@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.Set;
 
 @RestController
@@ -52,7 +53,7 @@ public class NotificationController {
     ) {
         User user = userDetailService.getUserById(request.getUserId());
 
-        NotificationResponse response = notificationService.createNotification(request,user);
+        NotificationResponse response = notificationService.createNotification(request, user);
 
         return ResponseEntity.ok(response);
     }
@@ -65,7 +66,8 @@ public class NotificationController {
     ) {
         Notification notification = notificationService.getNotificationById(id);
 
-        if(!notification.getUser().getEmail().equals(username))
+        if (!notification.getUser().getEmail().equals(username) &&
+                !(Objects.equals(notification.getUser().getId(), request.getUserId())))
             throw new NotificationAccessDeniedException("You do not have permission to update this appointment.");
 
         NotificationResponse response = notificationService.updateNotification(request, notification);
@@ -75,12 +77,11 @@ public class NotificationController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteNotification(
             @AuthenticationPrincipal String username,
-            @RequestBody NotificationRequest request,
             @PathVariable Long id
     ) {
         Notification notification = notificationService.getNotificationById(id);
 
-        if(!notification.getUser().getEmail().equals(username))
+        if (!notification.getUser().getEmail().equals(username))
             throw new NotificationAccessDeniedException("You do not have permission to delete this appointment.");
 
         notificationService.deleteNotification(notification);
