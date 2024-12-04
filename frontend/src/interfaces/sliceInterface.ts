@@ -28,4 +28,5 @@ export interface UserI {
 export interface UserSliceI {
   user: UserI | null;
   setUser: (user: UserI) => void;
+  logout: () => void;
 }

@@ -1,8 +1,9 @@
 "use client";
 
 import { Card, NotificationList } from "@/components";
+import withAuth from "../auth/withAuth";
 
-export default function MyNotifications() {
+const MyNotifications = () => {
   return (
     <section
       className="max-w-2xl
@@ -17,3 +18,5 @@ export default function MyNotifications() {
     </section>
   );
 }
+
+export default withAuth(MyNotifications);

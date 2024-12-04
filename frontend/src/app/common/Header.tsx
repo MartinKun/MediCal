@@ -1,9 +1,10 @@
 "use client";
 
 import { PrivateNav, PublicNav } from "@/components";
+import { useBoundStore } from "@/store/store";
 
 const Header: React.FC = () => {
-  const user = false;
+  const user = useBoundStore((state) => state.user)
   return (
     <header>
       <div

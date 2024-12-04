@@ -1,11 +1,15 @@
 "use client";
-import { BellIcon, CalendarIcon, UserIcon } from "lucide-react";
+import { BellIcon, CalendarIcon, LogOutIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import MenuButton from "./MenuButton";
 import { useState } from "react";
+import { useBoundStore } from "@/store/store";
+import { useRouter } from "next/navigation";
 
 export const PrivateNav = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const logout = useBoundStore((state) => state.logout)
+  const router = useRouter();
   return (
     <nav
       className="flex
@@ -72,7 +76,7 @@ export const PrivateNav = () => {
                      px-4
                      py-2
                      rounded-lg"
-          href={"/myProfile"}
+          href={"/profile"}
         >
           <UserIcon className="h-5 w-5 mr-2" />
           Mi Perfil
@@ -100,6 +104,20 @@ export const PrivateNav = () => {
                      rounded-full"
         ></span>
       </Link>
+      <button
+        className="text-white
+                     hover:bg-white
+                     hover:bg-opacity-20
+                     hover:text-black
+                     flex
+                     px-4
+                     py-2
+                     rounded-lg"
+        onClick={() => { logout(); router.push("/login") }}
+      >
+        <LogOutIcon className="h-5 w-5 mr-2" />
+        Cerrar Sesión
+      </button>
     </nav>
   );
 };

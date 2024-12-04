@@ -2,7 +2,10 @@
 
 import { Card, DoctorProfileForm, PatientProfileForm } from "@/components";
 
-export default function Profile() {
+import React from 'react'
+import withAuth from "../auth/withAuth";
+
+const Profile = () => {
   let userType = "patient";
 
   return (
@@ -23,3 +26,5 @@ export default function Profile() {
     </section>
   );
 }
+
+export default withAuth(Profile);

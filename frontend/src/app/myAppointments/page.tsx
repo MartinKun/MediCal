@@ -10,8 +10,9 @@ import {
 import useWindowWidth from "@/hook/useWindowWidth";
 import { AppointmentI } from "@/interfaces/appointmentInterface";
 import { useState } from "react";
+import withAuth from "../auth/withAuth";
 
-export default function MyAppointments() {
+const MyAppointments = () => {
   const [showModal, setShowModal] = useState(false);
   const [appointmentSelected, setAppointmentSelected] = useState<
     AppointmentI | undefined
@@ -74,3 +75,5 @@ export default function MyAppointments() {
     </section>
   );
 }
+
+export default withAuth(MyAppointments);
